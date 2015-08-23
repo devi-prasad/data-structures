@@ -1,5 +1,5 @@
 #ifndef _INCLUDED_SLIST_
-#define _INCLUDE_SLIST_
+#define _INCLUDED_SLIST_
 
 #include <stdint.h>
 
@@ -18,7 +18,7 @@ struct _node_ {
 };
 
 /* The public interface of the ADT */
-List*    slist_new();
+List     slist_new();
 List*    slist_free(List *);
 uint32_t slist_length(const List *list);
 uint32_t slist_lookup(const List *list, int32_t key);

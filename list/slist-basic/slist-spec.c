@@ -5,7 +5,9 @@
 
 void test_slist_generic()
 {
-    List *list = slist_new();
+    List alist = slist_new();
+    List *list = &alist;
+
     assert(slist_length(list) == 0);
 
     slist_add_head(list, 10);

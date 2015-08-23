@@ -3,30 +3,28 @@
 #include<assert.h>
 #include "slist.h"
 
-List* slist_new()
+List slist_new()
 {
-    List *list;
-    list = (List *) malloc(sizeof(List));
-    list->head = NULL;
-    list->tail = NULL;
-    list->length = 0;
-	
-    return list;	
+    List list;
+    list.head = list.tail = NULL;
+    list.length = 0;
+
+    return list;
 }
 
 /*
- * Free the nodes of the 'list'. 
+ * Free the nodes of the 'list'.
  * The list descriptor lives on till list_destroy() is called.
  */
- 
+
 List* slist_free(List *list)
 {
     Node *cur, *p;
-    
+
     if (slist_length(list) > 0) {
     	assert(list->head && list->tail);
         cur = list->head;
-        
+
         list->head = NULL;
         list->tail = NULL;
         while (cur != NULL) {
@@ -36,7 +34,7 @@ List* slist_free(List *list)
             --list->length;
         }
     }
-    
+
     return list;
 }
 
@@ -57,15 +55,14 @@ static Node* _list_node_new_(int32_t data)
 
 /*
  * creates a new node and initializes it with 'data'.
- * The head of 'list' will point to the new node. 
+ * The head of 'list' will point to the new node.
  */
 
 List* slist_add_head(List *list, int32_t data)
 {
     Node *node = _list_node_new_(data);
-	
-    node->next = list->head;	
-    
+
+    node->next = list->head;
     list->head = node;
     if (list->tail == NULL) { /* first node in the list */
         list->tail = node;
@@ -74,7 +71,7 @@ List* slist_add_head(List *list, int32_t data)
 
     assert((list->length == 1 && list->head == list->tail) || 
             (list->length > 0 && list->head != list->tail));
-    
+
     return list;
 	
 }
@@ -90,7 +87,7 @@ uint32_t slist_lookup(const List *list, int32_t key)
     for (node = list->head; node != NULL; node = node->next) {
         if (node->data == key) break;
     }
-    
+
     return (node != NULL);
 }
 
@@ -104,8 +101,7 @@ List* slist_add_tail(List *list, int32_t data)
     } else {
         list->head = list->tail = node;
     }
-
-    ++list->length;	
+    ++list->length;
 
     return list;
 }
@@ -113,31 +109,31 @@ List* slist_add_tail(List *list, int32_t data)
 List* slist_delete_head(List *list)
 {
     Node *node;
-     
+
     if (list->head != NULL) {
-        assert(list->length > 0);
+        assert(list->length > 0);    
         
         node = list->head;
-        
+
         list->head = list->head->next;
         --list->length;
         if (list->head == NULL) {
             list->tail = NULL;
             assert(list->length == 0);
         }
-        
+
         free(node);
     }
-    
+
     return list;
 }
 
 List* slist_delete_tail(List *list)
 {
     assert(list != NULL);
-    
-    Node *tail = list->tail;    
-    Node *node;;
+
+    Node *tail = list->tail;
+    Node *node;
 
     if (list->tail != NULL) {
     	assert(list->length > 0);
@@ -150,7 +146,7 @@ List* slist_delete_tail(List *list)
             list->tail->next = NULL;
             free(tail);
         }
-        
+
         --list->length;
     }
     
