@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 
-#define MAX_DEPTH 32
+#define MAX_DEPTH 42
 
 struct _stack_ {
     uint32_t size;               /* requested stack depth */
     int32_t  top;                /* index of the topmost element */
-    float    data[MAX_DEPTH];    /* actual contents */
+    int32_t  data[MAX_DEPTH];    /* actual contents */
 };
 typedef struct _stack_ Stack;
 
@@ -19,7 +19,7 @@ typedef struct _stack_ Stack;
 #define STACK_EMPTY       4
 
 struct _stack_result_ {
-    float data;
+    int32_t data;
     uint32_t status;
 };
 typedef struct _stack_result_ StackResult;
@@ -34,7 +34,7 @@ typedef struct _stack_result_ StackResult;
 Stack    stack_new(uint32_t size);
 uint32_t stack_full(Stack stk);
 uint32_t stack_empty(Stack stk);
-Stack    stack_push(Stack  stk, float data, StackResult *result);
+Stack    stack_push(Stack  stk, int32_t data, StackResult *result);
 Stack    stack_pop(Stack  stk, StackResult *result);
 Stack    stack_peek(Stack  stk, StackResult *result);
 

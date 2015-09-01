@@ -27,7 +27,7 @@ uint32_t stack_empty(Stack stk)
     return stk.top == -1;
 }
 
-Stack stack_push(Stack  stk, float data, StackResult *result)
+Stack stack_push(Stack  stk, int32_t data, StackResult *result)
 {
     if (stk.top + 1 < stk.size) {
         stk.data[++stk.top] = data;

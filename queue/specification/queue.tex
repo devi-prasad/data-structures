@@ -1,0 +1,153 @@
+\documentclass[10pt]{article}
+\usepackage{mathptmx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\renewcommand{\rmdefault}{ptm}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+\title{Formal Specification, Design and Implementation of the Circular Queue Data Structure}
+\author{
+  M.\, Devi Prasad\\
+  School of Information Sciences, Manipal University.\vspace*{6pt}\\
+  devi.prasad@manipal.edu
+ }
+\date{}
+\maketitle
+
+\begin{abstract}
+We present a formal specification of the \emph{Queue} data structure. First, we describe the essential properties of the queue abstract data type. We subsequently develop a behavioral specification of the ADT. This step introduces a few design decisions that influence the representation and efficiency of operations on queues. This, in turn, helps in shaping a concrete implementation in the C programming language. This entire exercise demonstrates how formal specification may guide different design choices, and thus lead to different implementations.
+\end{abstract}
+
+\section{Introduction}
+Most textbooks employ a pattern in describing data structures: first informally describe the behavior of a particular data structure, and follow it up with an implementation in a high level programming language or pseudo code. The informal descriptions use diagrams, operation traces and textual narratives. The time and space complexity of algorithms, and implementation efficiency are discussed to some extent in many books. THe depth and breadth of exposition depends on factors such as author's predispositions and the target audience.
+
+We wish to take a reasonably different approach to the way data structures course is taught. We wish to bring a little more engineering discipline to describing and developing data structures: we first bring out a specification, in some detail, of the interfaces of the underlying ADT. We follow it up with the design of the representation and associated behaviors of the data structure. We finally implement at the least two different versions in order to understand the pros and cons of different implementation strategies.
+
+\section{Notation and Conventions}
+We employ sets, sequences and tuples to develop an expressive formal specification of the queue data structure. We use the following notation:\vspace*{6pt}\\
+\noindent\hspace*{32pt}\begin{tabular}{lll}
+  Sequence & $[a_1, \, ..., \, a_n]$ & $where \; 0 \leq n$\vspace*{2pt}\\
+  n-tuple & $(a_1, \, a_2, \, ...,\, a_n)$\\
+\end{tabular}\vspace*{4pt}\\
+
+In the following sections, we will be using sequences to represent the actual data elements held by queue instances. An empty queue content is represented as $[\,]$ and a non-empty sequence of queue elements is shown as $[a_1, \,...\, a_n].$ 
+
+We write $d::s$ to mean a sequence of at least one element with item `d' at the head of the sequence; `s' in this case represents the rest of the sequence which may be empty. The expression $s::d$ represents a sequence ending with an item `d'.
+
+We use two auxiliary functions, $abs$ and $len$; the former computes the absolute value while the latter determines the length of a sequence. 
+
+ Certain queue operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{R} \times \mathbb{N}$ is used to hold the value ($\mathbb{R}$ component) and the (potential error) status \texttt{OK}, \texttt{FULL}, and \texttt{EMPTY}. 
+
+\section{The Definition of Queue and Result Interfaces}
+  \noindent Queues are `First In First Out' data structures, in contrast to stacks, which are `Last In First Out' data structures. In order to ensure that the first element to enter the queue is the first one to exit, we designate two independent positions in a queue - a \emph{head} and a \emph{tail}. New elements are added to the queue at the tail position, and items are removed from the head position.
+
+  In order to simplify bookkeeping, and to allow the queue to be filled to its capacity, we maintain a running count of the items in the queue. This simplifies reasoning and improves understandability of the specification, design, and code.
+
+  The queue interface consists of a constructor function, two inspector functions, and two procedures that update the state of an instance. We define an auxiliary interface named `Result' to represent either the answer or the error (status) returned by certain operations.   
+  
+  \subsection{The Queue Interface}
+  \noindent While instantiating a queue object, we indicate the desired length of the queue. 
+  \vspace*{6pt}\\\hspace*{32pt}\(
+  \textbf{new}: \mathbb{N} \rightarrow \mathrm{Queue}
+  \)\vspace*{6pt}\\
+  The design as well as the implementation may choose to impose a limit on the permitted queue length. The specified length value (passed to textbf{new}) will be stored as a part of queue's internal representation. 
+
+  Queues support two operations: \textbf{add} and \textbf{remove} which operate on the \emph{tail} and \emph{head} of the queue, respectively. New elements are added to the queue at the tail end. Elements are removed from the head of the queue.
+  \vspace*{6pt}\\\(
+      \hspace*{32pt}\textbf{add}: \mathrm{Queue} \times \mathbb{R} \rightarrow \mathrm{Queue \times Result}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{remove}: \mathrm{Queue} \times \mathbb{R} \rightarrow \mathrm{Queue \times Result}
+  \)\vspace*{6pt}\\
+  When the queue is full, \textbf{add} records the status, FULL, in the `status` component of the Result tuple. When the queue is empty, \textbf{remove} operation records EMPTY in the Result tuple. 
+
+  A couple of self-explanatory inspector functions are handy. Some programs may prefer to check the state of the queue before attempting other operations.
+  \vspace*{6pt}\\\(
+  \hspace*{32pt}\textbf{empty}: \mathrm{Queue} \rightarrow \mathrm{Boolean}\vspace*{4pt}\\
+  \hspace*{32pt}\textbf{full}: \mathrm{Queue} \rightarrow \mathrm{Boolean}
+  \)\vspace*{6pt}
+
+  \subsection{The Result Interface}
+  The \textbf{Result} interface has a constructor, and value and status component extractors:
+  \vspace*{6pt}\\\(
+  \hspace*{32pt}\textbf{result}: \mathbb{R} \times \mathrm{Status} \rightarrow \mathrm{Result}\vspace*{4pt}\\
+  \hspace*{32pt}\textbf{val}: \mathrm{Result} \rightarrow \mathbb{R}\vspace*{4pt}\\
+  \hspace*{32pt}\textbf{status}: \mathrm{Result} \rightarrow \mathrm{Status}
+  \)\vspace*{6pt}  
+  
+  \textbf{Status} is a set of three values representing the state after performing an operations on a queue instance: 
+   \vspace*{6pt}\\\(\hspace*{32pt}\mathrm{Status} = \{OK, \; EMPTY, \; FULL\} \)
+
+  \section{The Semantics of Queue Operations}
+    While instantiating a new queue, there is a provision to set the actual length of the queue to a specific value. This value is passed as an argument to the operation. If this value exceeds a limit defined by a particular implementation, the size is set to that limiting value (referred to as MAX\_QUEUE\_LEN below).
+
+    We represent a queue instance by a 5-tuple. The first component represents the number of items this queue instance may hold. The second component represents the running count of items in the queue. The third and fourth components represents the head and tail index positions within the contents sequence. the The fifth component is the sequence representing the actual contents of the queue instance. When a queue object is freshly instantiated, its contents will be empty. \vspace*{3pt}\\
+    \[
+        \mathtt{\mathbf{new}(size)} = \begin{cases} (size, 0, 0, 0, [\,]) &\mbox{if\;\;} 0 < size < \mathtt{MAX\_QUEUE\_LEN}. \vspace*{6pt}\\ 
+        (\mathtt{MAX\_QUEUE\_LEN}, 0, 0, 0, [\,]) & \mbox{otherwise}. \end{cases} 
+    \]
+    
+    We employ circular queues for efficiency reasons. Both head and tail indices wrap around while removing items from, and adding items to the queue. This slightly complicates bookkeeping logic and the associated reasoning. 
+
+    \noindent The following three invariants hold for a queue instance:\vspace*{6pt}\\
+    \(
+        \hspace*{32pt}(count = 0) \implies (head = tail)\vspace*{6pt}\\
+        \hspace*{32pt}(count = size) \implies (head = tail)\vspace*{8pt}\\
+        \hspace*{32pt}0 < count < size \implies 
+            \begin{cases} 
+               count = (tail - head) & \mbox{if  } tail > head. \vspace*{6pt}\\ 
+               count = (size - (head - tail)) & \mbox{if } head > tail.\\
+            \end{cases} 
+    \)\vspace*{6pt}\\
+
+    We define two state inspector operations, \emph{empty} and \emph{full}, by pattern-matching over the representation structure of queue instances. It is appropriate, at this point, to note that a freshly created queue instance is empty.
+    \vspace*{3pt}\\
+    \[
+        \mathtt{\mathbf{empty}(queue)} = \begin{cases} True & \mbox{if  } \mathtt{queue} = (size, \, 0, \, h, \, t, \, [\,])\\
+        &\hspace*{10pt}\wedge\;\; h = t \vspace*{6pt}\\ 
+        False & \mbox{otherwise}. \end{cases} 
+    \]
+
+    A queue instance is full when there is no room to hold a new element.
+
+    \[
+        \mathtt{\mathbf{full}(queue)} = \begin{cases} True & \mbox{if  } \mathtt{queue} = (size, \, n, \, h, \, t, \, s) \\
+            &\hspace*{10pt}\wedge\;\; n = len(s) \\
+            & \hspace*{10pt}\wedge\;\;  n = size. \\
+            & \hspace*{10pt}\wedge\;\;  h = t. \vspace*{6pt}\\ 
+        False & \mbox{otherwise}. \end{cases} 
+    \]
+    
+    Attempt to add a new item to the queue will succeed if the queue is not already full. This is indicated by the OK status component of the answer. In the other case where queue is full, the status FULL is returned.
+
+    \[
+        \mathtt{\mathbf{add}(queue,\, d)} = \begin{cases} ((size, \, n', \, \_, \, t', \, s'),  {\textcolor{blue}{(\_, OK)}}) & \mbox{if } \mathtt{queue} = (size, \, n, \, \_, \, t,\, \, s)\\ & \hspace*{10pt}\wedge\; \; n = len(s)
+        \\ & \hspace*{10pt}\wedge\; \; (n+1) \leq size
+        \\ & \hspace*{10pt}\wedge\; \; n' = (n+1) 
+        \\ & \hspace*{10pt}\wedge\; \; t' = (t + 1) \,\%\, size 
+        \\ & \hspace*{10pt}\wedge\; \; s' = s::d\vspace*{6pt}\\ 
+        (\mathtt{queue},\;{\textcolor{red}{(\_, FULL)}} \; ) & \mbox{if } \mathtt{queue} = (size, \, n, \, \_, \, \_, \, s)\\
+        & \hspace*{10pt}\wedge\; \; n = len(s)\\
+        & \hspace*{10pt}\wedge\; \; n = size. \end{cases} 
+    \]
+
+    We should convince ourselves that equational reasoning holds good if we substitute the expression for \textbf{full} (shown above) on the right-side conditionals of each case of the \textbf{push} operation. 
+  
+    The \textbf{remove} operation succeeds if the queue in not empty. Again, we should convince that equational reasoning holds if we plug \textbf{empty}, from its definition above, on the right side conditionals in the following: 
+
+    \[
+        \mathtt{\mathbf{remove}(queue)} = \begin{cases} ((size,\, n', \, h', \, \_, \, s'), {\textcolor{blue}{(d, OK)}}) & \mbox{if } \mathtt{queue} = (size, \,n, \,h, \,\_,\,s)
+        \\& \hspace*{10pt}\wedge \;\; n = len(q)
+        \\& \hspace*{10pt}\wedge \;\; n > 0
+        \\& \hspace*{10pt}\wedge \;\; n' = (n-1)
+        \\& \hspace*{10pt}\wedge \;\; h' = (h + 1) \,\%\, size
+        \\& \hspace*{10pt}\wedge \;\; s = d::s' \vspace*{6pt}\\
+
+        (\mathtt{queue},{\textcolor{red}{(\_,\; EMPTY)}})  & \mbox{if }\mathtt{queue} = (size, \,0,\,\_,\, \_,\, [\,]). \end{cases} 
+    \]
+
+
+\end{document}
+
+
+
