@@ -89,17 +89,22 @@ We use two auxiliary functions, $abs$ and $len$; the former computes the absolut
     
     We employ circular queues for efficiency reasons. Both head and tail indices wrap around while removing items from, and adding items to the queue. This slightly complicates bookkeeping logic and the associated reasoning. 
 
-    \noindent The following three invariants hold for a queue instance:\vspace*{6pt}\\
+    \noindent The following invariants hold for a queue instance:\vspace*{6pt}\\
     \(
         \hspace*{32pt}(count = 0) \implies (head = tail)\vspace*{6pt}\\
         \hspace*{32pt}(count = size) \implies (head = tail)\vspace*{8pt}\\
-        \hspace*{32pt}0 < count < size \implies 
-            \begin{cases} 
-               count = (tail - head) & \mbox{if  } tail > head. \vspace*{6pt}\\ 
-               count = (size - (head - tail)) & \mbox{if } head > tail.\\
-            \end{cases} 
-    \)\vspace*{6pt}\\
+        \hspace*{32pt}0 < count < size \implies tail = (head + count) \,\%\, size \\
+            %\begin{cases}
+               %count = (tail - head) & \mbox{if  } tail > head. \vspace*{6pt}\\ 
+               %count = (size - (head - tail)) & \mbox{if } head > tail.\\
+            %\end{cases} 
+    \)%\vspace*{2pt}\\
 
+    \noindent It is easy to see that with slight modification, the third rule above can be made generic, and make it covers the first two cases. Therefore, we will retain only the following rule as the invariant.\vspace*{6pt}\\
+    \(
+        \hspace*{32pt}0 \leq count \leq size \implies tail = (head + count) \,\%\, size \\
+    \)
+    
     We define two state inspector operations, \emph{empty} and \emph{full}, by pattern-matching over the representation structure of queue instances. It is appropriate, at this point, to note that a freshly created queue instance is empty.
     \vspace*{3pt}\\
     \[
