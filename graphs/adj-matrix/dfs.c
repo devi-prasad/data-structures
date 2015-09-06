@@ -7,7 +7,9 @@
 Vertex vertex_new(uint32_t id, const char *label)
 {
     Vertex v;
+
     v.id = id;
+    v.parent = 0xFF;   /* unused in this version */
     strncpy(v.label, label, MAX_LABEL_LEN-1);
     v.label[MAX_LABEL_LEN-1] = '\0';
 
@@ -20,7 +22,7 @@ static void do_graph_dfs(Graph g, Vertex v, Visitor visit)
     StackResult res;
     uint8_t u = v.id, w;
 
-    Stack vstk = stack_new(g.vc * 5);
+    Stack vstk = stack_new(0);
     stack_push(vstk, u, &res);
 
     while (!stack_empty(vstk)) {
@@ -36,7 +38,7 @@ static void do_graph_dfs(Graph g, Vertex v, Visitor visit)
             
             /* push each neighbors of vertex u on the stack */
             for (w = 0; w < g.vc; ++w) {
-            	if (w != u && g.adj[u][w]) {
+            	if (w != u && g.adj[u][w] && !VISITED_VERTEX(vert_state[w])) {
             	    stack_push(vstk, w, &res);
             	    assert(res.status == STACK_OK);
                 }
