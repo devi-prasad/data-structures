@@ -55,6 +55,25 @@ void test_six_vertex_complete_graph()
     graph_dfs(g, printer);
 }
 
+void test_generic_graph()
+{
+    Graph g = {
+      8,
+      { {0, 1, 0, 0, 1, 1, 0, 0}, 
+        {1, 0, 1, 0, 0, 0, 1, 0},
+        {0, 1, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1, 0, 0, 1},
+        {1, 0, 0, 1, 0, 0, 1, 1},
+        {1, 0, 0, 0, 0, 0, 1, 0},
+        {0, 1, 1, 0, 1, 1, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0}
+      },
+      {"a", "b", "c", "d", "e", "f", "g", "h"},
+    };
+
+    graph_dfs(g, printer);   
+}
+
 int main()
 {
     test_three_vertex_graph();
@@ -62,5 +81,8 @@ int main()
     test_six_vertex_graph();
     printf("\n\n");
     test_six_vertex_complete_graph();
+    printf("\n\n");
+    test_generic_graph();
+
     return 0;
 }

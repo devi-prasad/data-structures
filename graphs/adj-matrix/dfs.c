@@ -49,7 +49,7 @@ static void do_graph_dfs(Graph g, Vertex v, Visitor visit)
 
 void graph_dfs(Graph g, Visitor visit)
 {
-    Vertex root = vertex_new(g.vc - 1, g.labels[g.vc-1]);
+    Vertex root = vertex_new(0, g.labels[g.vc-1]);
     
     do_graph_dfs(g, root, visit);
 }
