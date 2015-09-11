@@ -16,9 +16,9 @@ Vertex vertex_new(uint32_t id, const char *label)
     return v;
 }
 
-static void do_graph_dfs(Graph g, Vertex v, Visitor visit)
+static void _do_graph_dfs_(Graph g, Vertex v, Visitor visit)
 {
-	uint8_t vert_state[MAX_VERTS] = {1};
+    uint8_t vert_state[MAX_VERTS] = {0};
     StackResult res;
     uint8_t u = v.id, w;
 
@@ -51,5 +51,5 @@ void graph_dfs(Graph g, Visitor visit)
 {
     Vertex root = vertex_new(0, g.labels[g.vc-1]);
     
-    do_graph_dfs(g, root, visit);
+    _do_graph_dfs_(g, root, visit);
 }
