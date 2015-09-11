@@ -1,23 +1,25 @@
 
-|-------------|------------------|----------------------------------------------|
-| Day         | Date             | Topic                                        | 
-|-------------|------------------|----------------------------------------------|
-| Monday      | 17, August       | Intro. Discussion. Rationale. Approach       |
-| Wednesday   | 19, August       | Graphs continued. Paths, Cycles, etc.        |
-| Friday      | 21, August       | DFS and BFS algorithms. Necessity of stacks. |
-| Monday      | 24, August       | Stack formal spec: ADT and semantics.        |
-| Wednesday   | 26, August       | Stack spec and basic stack implementation.   |
-| Friday      | 28, August       | Stack implementations.                       |
-| Monday      | 31, August       | Queue specification and design.              |
-| Wednesday   | 2, September     | Queue implementation.                        |
-| Saturday    | 4, September     | DFS implementation.                          |
-|-------------|------------------|----------------------------------------------|
-| Monday      | 7, September     | BFS implementation.                          |
-|-------------|------------------|----------------------------------------------|
-| Wednesday   | 9,  September    | List data structure.                         |
-| Friday      | 11, September    | List data structure - implementation.        |
-| Wednesday   | 16, September    | Binary Search Tree.                          |
-| Wednesday   | 18, September    | Binary Search Tree - implementation.         |
-|-------------------------------------------------------------------------------|
+|-------------|------------------|--------------------------------------------|
+| Day         | Date             | Topic                                      | 
+|-------------|------------------|--------------------------------------------|
+| Monday      | 17, August       | Intro. Discussion. Rationale. Approach     |
+| Wednesday   | 19, August       | Graphs continued. Paths, Cycles, etc.      |
+| Friday      | 21, August       | DFS and BFS algorithms.                    |
+|             |                  | The need for stack data structure in DFS.  |
+|             |                  | The need for queue data structure in BFS.  |
+| Monday      | 24, August       | Stack formal spec: ADT and semantics.      |
+| Wednesday   | 26, August       | Stack spec and basic stack implementation. |
+| Friday      | 28, August       | Stack implementations.                     |
+| Monday      | 31, August       | Queue specification and design.            |
+| Wednesday   | 2, September     | Queue implementation.                      |
+| Saturday    | 4, September     | DFS implementation.                        |
+| Monday      | 7, September     | BFS implementation.                        |
+| Wednesday   | 9,  September    | List data structure.                       |
+|-------------|------------------|--------------------------------------------|
+| Friday      | 11, September    | List data structure - implementation.      |
+|-------------|------------------|--------------------------------------------|
+| Wednesday   | 16, September    | Binary Search Tree.                        |
+| Wednesday   | 18, September    | Binary Search Tree - implementation.       |
+|-----------------------------------------------------------------------------|
 
-First Internal Tests: September 12 - 15      
+First Internal Tests: September 12 - 15.
