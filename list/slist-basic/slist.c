@@ -35,9 +35,19 @@ List* slist_free(List *list)
         }
     }
 
+    assert(list->length == 0);
+    assert(list->head == NULL && list->tail == NULL);
+
     return list;
 }
 
+List* slist_free_from_head(List *list)
+{
+    while (slist_length(slist_delete_head(list)) > 0) ;
+
+    assert(list->head == NULL && list->tail == NULL);
+    return list;
+}
 
 /*
  * A helper internal function to allocate node that holds 'data'.
@@ -108,12 +118,12 @@ List* slist_add_tail(List *list, int32_t data)
 
 List* slist_delete_head(List *list)
 {
-    Node *node;
+    Node *head;
 
     if (list->head != NULL) {
         assert(list->length > 0);    
         
-        node = list->head;
+        head = list->head;
 
         list->head = list->head->next;
         --list->length;
@@ -122,7 +132,7 @@ List* slist_delete_head(List *list)
             assert(list->length == 0);
         }
 
-        free(node);
+        free(head);
     }
 
     return list;
@@ -132,22 +142,24 @@ List* slist_delete_tail(List *list)
 {
     assert(list != NULL);
 
-    Node *tail = list->tail;
-    Node *node;
-
+    Node *tail;
+    
     if (list->tail != NULL) {
     	assert(list->length > 0);
+
+    	tail = list->tail;
         if (list->tail == list->head) {
             list->head = list->tail = NULL;
         } else {
             /* find the node one step behind the 'tail' node */
+            Node *node;
             for (node = list->head; node->next != list->tail; node = node->next) ;
+            node->next = NULL;
             list->tail = node;
-            list->tail->next = NULL;
-            free(tail);
         }
 
         --list->length;
+        free(tail);
     }
     
     return list;

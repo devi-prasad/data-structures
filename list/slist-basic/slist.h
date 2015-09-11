@@ -20,6 +20,7 @@ struct _node_ {
 /* The public interface of the ADT */
 List     slist_new();
 List*    slist_free(List *);
+List*    slist_free_from_head(List *list);
 uint32_t slist_length(const List *list);
 uint32_t slist_lookup(const List *list, int32_t key);
 List*    slist_add_head(List *list, int32_t data);
