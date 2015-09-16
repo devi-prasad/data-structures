@@ -91,9 +91,14 @@ uint32_t slist_length(const List *list)
     return list->length;
 }
 
+/*
+ * returns true if 'key' is found in 'list' when it is scanned from list->head.
+ * returns false (which is 0 in C), otherwise.
+ */
 uint32_t slist_lookup(const List *list, int32_t key)
 {
-    Node *node = list->head;
+    Node *node;
+
     for (node = list->head; node != NULL; node = node->next) {
         if (node->data == key) break;
     }
