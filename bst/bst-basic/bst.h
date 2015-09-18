@@ -23,10 +23,12 @@ struct _tree_node_ {
 
 BST bst_new();
 BST* bst_add(BST *tree, Key key, Result *res);
-BST* bst_traverse_inorder(BST tree);
-BST* bst_traverse_preorder(BST tree);
-BST* bst_traverse_postorder(BST tree);
-BST* bst_find(BST tree, Key key, Result *result);
+BST* bst_traverse_inorder_recursive(BST *tree);
+BST* bst_traverse_inorder_iterative(BST *tree);
+
+BST* bst_traverse_preorder(BST *tree);
+BST* bst_traverse_postorder(BST *tree);
+BST* bst_find(BST *tree, Key key, Result *result);
 
 uint32_t bst_mass(const BST *tree);
 uint32_t bst_height(const BST *tree);
