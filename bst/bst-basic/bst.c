@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "stack.h"
 #include "bst.h"
 
 BST bst_new()
@@ -60,51 +61,53 @@ uint32_t bst_mass(const BST *tree)
     return tree->mass;
 }
 
-#include "stdio.h"
-
-static void _do_bst_traverse_inorder_recursive_(TreeNode *root)
+static void _do_bst_traverse_inorder_recursive_(TreeNode *root, Visitor visitor)
 {
     if (root != NULL) {
-        _do_bst_traverse_inorder_recursive_(root->left);
-        printf(" %d ", root->key);
-        _do_bst_traverse_inorder_recursive_(root->right);
+        _do_bst_traverse_inorder_recursive_(root->left, visitor);
+        visitor(VISIT_ELEMENT, root->key);
+        _do_bst_traverse_inorder_recursive_(root->right, visitor);
     }
 }
 
-BST* bst_traverse_inorder_recursive(BST *tree)
+BST* bst_traverse_inorder_recursive(BST *tree, Visitor visitor)
 {
-    printf("\n ");
-    _do_bst_traverse_inorder_recursive_(tree->root);
-    printf("\n\n");
+    assert(tree != NULL);
+    visitor(VISIT_START, 0); /* ignore the second argument. Its a dummy. */
+    _do_bst_traverse_inorder_recursive_(tree->root, visitor);
+    visitor(VISIT_END, 0);   /* ignore the second argument. Its a dummy. */
+
     return tree;
 }
 
-
-#define STACK_CONTENT_TYPE void *
-#include "stack.h"
-
-static void _do_bst_traverse_inorder_iterative_(TreeNode *root)
+static void _do_bst_traverse_inorder_iterative_(TreeNode *root, Visitor visitor)
 {
     Stack stk;
     StackResult res;
 
     stk = stack_new(0);
     while (root != NULL || !stack_empty(stk)) {
-        while (root != NULL) {
+        if (root != NULL) { /* walk down the left subtree. */
             stack_push(stk, root, &res);
             root = root->left;
+        } else {
+            /* no subtree to process; visit the parent node. */
+            stack_pop(stk, &res);
+            root = res.data;
+            /* Now is the time to process this node data! */
+            visitor(VISIT_ELEMENT, root->key);
+            root = root->right; /* inspect the right subtree. */
         }
-        stack_pop(stk, &res);
-        root = res.data;
-        printf(" %d ", root->key);
-        root = root->right;
     };
+    stack_delete(stk);
 }
 
-BST* bst_traverse_inorder_iterative(BST *tree)
+BST* bst_traverse_inorder_iterative(BST *tree, Visitor visitor)
 {
-    printf("\n ");
-    _do_bst_traverse_inorder_iterative_(tree->root);
-    printf("\n\n");
+    assert(tree != NULL);
+    visitor(VISIT_START, 0); /* ignore the second argument. Its a dummy. */
+    _do_bst_traverse_inorder_iterative_(tree->root, visitor);
+    visitor(VISIT_END, 0);   /* ignore the second argument. Its a dummy. */
+
     return tree;
 }

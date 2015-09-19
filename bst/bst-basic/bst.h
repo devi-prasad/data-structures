@@ -21,10 +21,17 @@ struct _tree_node_ {
     TreeNode *right;
 };
 
+/* EVENT types for the Visitor function */
+#define VISIT_START       2
+#define VISIT_END         4
+#define VISIT_ELEMENT     8
+
+typedef void (Visitor)(uint32_t event, Key data);
+
 BST bst_new();
 BST* bst_add(BST *tree, Key key, Result *res);
-BST* bst_traverse_inorder_recursive(BST *tree);
-BST* bst_traverse_inorder_iterative(BST *tree);
+BST* bst_traverse_inorder_recursive(BST *tree, Visitor visitor);
+BST* bst_traverse_inorder_iterative(BST *tree, Visitor visitor);
 
 BST* bst_traverse_preorder(BST *tree);
 BST* bst_traverse_postorder(BST *tree);
