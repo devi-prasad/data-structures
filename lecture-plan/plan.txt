@@ -15,11 +15,29 @@
 | Saturday    | 4, September     | DFS implementation.                        |
 | Monday      | 7, September     | BFS implementation.                        |
 | Wednesday   | 9,  September    | List data structure.                       |
-|-------------|------------------|--------------------------------------------|
 | Friday      | 11, September    | List data structure - implementation.      |
-|-------------|------------------|--------------------------------------------|
 | Wednesday   | 16, September    | Binary Search Tree.                        |
-| Wednesday   | 18, September    | Binary Search Tree - implementation.       |
-|-----------------------------------------------------------------------------|
+| Friday      | 18, September    | Binary Search Tree - implementation.       |
+|-------------|------------------|--------------------------------------------|
+| Monday      | 21, September    | Minimum Spanning Trees.                    |
+|             |                  | Prim's algorithm. Implementation.          |
+|-------------|------------------|--------------------------------------------|
+| Wednesday   | 23, September    |                                            |
+| Friday      | 25, September    |                                            |
+| Monday      | 28, September    |                                            |
+| Wednesday   | 30, September    |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|             |                  |                                            |
+|-------------|------------------|--------------------------------------------|
 
 First Internal Tests: September 12 - 15.

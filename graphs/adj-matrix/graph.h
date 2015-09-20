@@ -1,3 +1,6 @@
+#ifndef _INCLUDED_GRAPH_
+#define _INCLUDED_GRAPH_
+
 #include <stdint.h>
 
 #define MAX_VERTS 12                   /* we deal with tiny graphs! */ 
@@ -47,3 +50,4 @@ int isa_trail(const Graph g, const Walk w);
 int isa_path(const Graph g, const Walk w);
 int isa_cycle(const Graph g, const Walk w);
 
+#endif
