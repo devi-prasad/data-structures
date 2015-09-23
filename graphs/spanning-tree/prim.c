@@ -13,7 +13,7 @@
 static uint8_t 
 _extract_min_weight_vertex_(const uint8_t weight[], const uint8_t marked[], const uint8_t nverts)
 {
-    uint8_t i, min, index; 
+    uint8_t i, min, index = nverts; 
     
     for (i = 0, min = MAX_WEIGHT; i < nverts; ++i) {
         if (!marked[i] && weight[i] < min) {
@@ -22,6 +22,7 @@ _extract_min_weight_vertex_(const uint8_t weight[], const uint8_t marked[], cons
 	    }
     }
 
+    assert(index != nverts);
     return index;
 }
 
@@ -57,6 +58,12 @@ _init_tree_(const uint8_t root, const uint8_t parent[], const uint8_t weight[],
     }
 }
 
+/*
+ * A greedy technique for computing the minimum weight spanning tree.
+ * 'graph' is the input and 'tree' is the result.
+ * It is perfectly alright to have 'graph' and 'tree' share identity.
+ *
+ */
 void spanning_tree_prim(const Graph *graph, uint8_t root, Graph *tree)
 {
     const uint8_t VERTEX_COUNT = graph->vc;
@@ -73,7 +80,7 @@ void spanning_tree_prim(const Graph *graph, uint8_t root, Graph *tree)
     uint8_t unmarked_vertices_exist = VERTEX_COUNT;
     while (--unmarked_vertices_exist) {
         u = _extract_min_weight_vertex_(weight, marked, VERTEX_COUNT);
-        marked[u] = TRUE;
+        marked[u] = TRUE;     /* V - {u} */
         for (v = 0; v < VERTEX_COUNT; ++v) {
             if (graph->adj[u][v] && !marked[v] && 
                                     graph->adj[u][v] < weight[v]) {
