@@ -11,7 +11,8 @@
  * selects a vertex with minimum weight among the unmarked ones.
  */ 
 static uint8_t 
-_extract_min_weight_vertex_(const uint8_t weight[], const uint8_t marked[], const uint8_t nverts)
+_extract_min_weight_vertex_(const uint8_t weight[], const uint8_t marked[],
+                            const uint8_t nverts)
 {
     uint8_t i, min, index = nverts; 
     

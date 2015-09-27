@@ -11,6 +11,7 @@ struct _graph_ {
     uint8_t  vc;                           /* actual # vertices in the graph */
     uint8_t  adj[MAX_VERTS][MAX_VERTS];    /* edges */
     char     *labels[MAX_VERTS];           /* for a labeled graph */
+    uint8_t  ec;                           /* number of distinct edges */
 };
 typedef struct _graph_ Graph;
 

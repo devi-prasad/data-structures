@@ -6,7 +6,7 @@ rm -f a.out spantree *.o
 GRAPH_DIR=../adj-matrix
  
 cc  -Wall -I ${GRAPH_DIR} \
-         prim.c st-spec.c \
+         setop.c prim.c kruskal.c st-spec.c \
          -o spantree
 
 ## remove the object files.
