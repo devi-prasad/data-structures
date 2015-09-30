@@ -11,7 +11,7 @@
 /* state variables */
 static Stack    _vstk_;
 static uint8_t  _index_;
-static uint8_t _scc_count;
+static uint8_t _scc_count_;
 
 static void _scc_tarjan_(Graph *graph, Vertex verts[], uint8_t i)
 {
@@ -41,7 +41,7 @@ static void _scc_tarjan_(Graph *graph, Vertex verts[], uint8_t i)
     if (verts[i].low_link == verts[i].index) {
     	Vertex w;
     	/* start a new strongly connected component */
-    	++_scc_count;
+    	++_scc_count_;
         do {
             stack_pop(_vstk_, &r);
             assert(r.status == STACK_OK);
@@ -54,7 +54,6 @@ static void _scc_tarjan_(Graph *graph, Vertex verts[], uint8_t i)
 int32_t find_stronly_connected_components_tarjan(Graph *graph)
 {
 	uint8_t i;
-	uint8_t nsccs;
 	Vertex verts[graph->vc];
 
     for (i = 0; i < graph->vc; ++i) {
@@ -65,16 +64,16 @@ int32_t find_stronly_connected_components_tarjan(Graph *graph)
 
     _vstk_ = stack_new(0);
     _index_ = 0;
-    _scc_count = 0;
-    for (nsccs = 0, i = 0; i < graph->vc; ++i) {
+    _scc_count_ = 0;
+
+    for (i = 0; i < graph->vc; ++i) {
         if (verts[i].index == 0xFF) {
             _scc_tarjan_(graph, verts, i);
-            ++nsccs;
         }
     }
 
    _index_ = 0xFF;
    stack_delete(_vstk_);
 
-   return _scc_count;
+   return _scc_count_;
 }
