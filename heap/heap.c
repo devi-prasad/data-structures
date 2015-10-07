@@ -32,12 +32,12 @@ uint32_t heap_size(Heap *heap)
     return heap->size;
 }
 
-inline void heap_set_good(Heap *heap)
+static inline void _heap_set_good_(Heap *heap)
 {
     heap->data[0] = HEAP_GOOD_MAGIC_SIG; 
 }
 
-inline void heap_set_bad(Heap *heap)
+static inline void _heap_set_bad_(Heap *heap)
 {
     heap->data[0] = HEAP_BAD_MAGIC_SIG;
 }
@@ -70,7 +70,7 @@ Heap heap_new(int32_t data[], uint32_t len)
     heap.size = len;
     memcpy(heap.data, data, (len+1) * sizeof(int32_t));
     
-    heap_set_good(&heap);
+    _heap_set_good_(&heap);
 
     return heap;
 }
@@ -88,7 +88,7 @@ Heap* heap_sort(Heap *heap)
         _heapify_(data, --len, 1);
     }
     
-    heap_set_bad(heap);
+    _heap_set_bad_(heap);
     return heap;
 }
 
@@ -137,5 +137,5 @@ void heap_delete(Heap *heap)
     assert(heap_check_valid(heap));
     heap->size = 0;
     memset(heap->data, 0, MAX_HEAP_SIZE * sizeof(int32_t));
-    heap_set_bad(heap);
+    _heap_set_bad_(heap);
 }

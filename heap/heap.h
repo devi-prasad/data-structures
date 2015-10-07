@@ -20,8 +20,6 @@ typedef struct _heap_ Heap;
 #define  HEAP_GOOD_MAGIC_SIG 0xBEADCAFE
 #define  HEAP_BAD_MAGIC_SIG  0xDEADBEEF
 
-inline void     heap_set_good(Heap *heap);
-inline void     heap_set_bad(Heap *heap);
 inline int32_t  heap_check_good(Heap *heap);
 inline int32_t  heap_check_bad(Heap *heap);
 inline int32_t  heap_check_valid(Heap *heap);
