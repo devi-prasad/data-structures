@@ -97,7 +97,7 @@ void test_heap_size_three()
     Heap heap = heap_new(data, 3);
 
     assert(heap_size(&heap) == 3);
-    assert(heap.data[0] == 0);
+    assert(heap_check_good(&heap));
     assert(heap.data[1] == 10);
     assert(heap.data[2] == 2);
     assert(heap.data[3] == 7);
@@ -106,6 +106,7 @@ void test_heap_size_three()
 
     heap_sort(&heap);
     _assert_sorted_(heap.data, heap.size);
+    assert(heap_check_bad(&heap));
 
     heap_delete(&heap);
   }
@@ -116,13 +117,15 @@ void test_heap_size_three()
     Heap heap = heap_new(data, 3);
     
     assert(heap_size(&heap) == 3);
-    assert(heap.data[0] == 0);
+    assert(heap_check_good(&heap));
     assert(heap.data[1] == 10);
     assert(heap.data[2] == 7);
     assert(heap.data[3] == 2);
     
     heap_sort(&heap);
     _assert_sorted_(heap.data, heap.size);
+    assert(heap_check_bad(&heap));
+
     heap_delete(&heap);
   }  
 }
