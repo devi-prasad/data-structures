@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-#define MAX_VERTS 12                   /* we deal with tiny graphs! */ 
+#define MAX_VERTS 12                   /* we deal with tiny graphs! */
+#define GRAPH_MAX_VERTS 12             /* we deal with tiny graphs! */ 
 #define MAX_WALK_LEN (MAX_VERTS * 3)   /* 3 edges per vertex is reasonable */
 #define MAX_LABEL_LEN 16               /* length of a vertex label */
 
@@ -46,6 +47,7 @@ typedef struct _walk_ Walk;
 /*
  * The Public Interface
  */
+uint32_t graph_vertex_count(const Graph g);
 int isa_walk(const Graph g, const Walk w);
 int isa_trail(const Graph g, const Walk w);
 int isa_path(const Graph g, const Walk w);

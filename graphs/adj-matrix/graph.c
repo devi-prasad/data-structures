@@ -1,6 +1,11 @@
 #include "graph.h"
 #include <assert.h>
 
+uint32_t graph_vertex_count(const Graph g)
+{
+    return g.vc;
+}
+
 /* 
  * A "Walk" is a sequence of vertices visited in arbitrary manner.
  * returns 0 if an attempt is made to walk across a non-existing edge.
