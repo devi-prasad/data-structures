@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "all-pairs-slow.h"
 
-int32_t MIN(dist_t x, dist_t y)
+static int32_t MIN(dist_t x, dist_t y)
 {
     if (x == INFINITE) return y;
     if (y == INFINITE) return x;
@@ -10,7 +10,7 @@ int32_t MIN(dist_t x, dist_t y)
     return (x <= y ? x : y);
 }
 
-int32_t ADD(dist_t d, dist_t w)
+static int32_t ADD(dist_t d, dist_t w)
 {
     if (d == INFINITE || w == INFINITE) return INFINITE;
 
@@ -42,16 +42,6 @@ static Graph _compute_all_pairs_shortest_paths_(Graph D, const Graph W)
 
     for (m = 1; m < NUM_VERTS - 1; ++m) {
         D = _extend_shortest_paths_(D, W);
-
-        /*printf("\n");
-        int i, j;
-        for (i = 0; i < NUM_VERTS; ++i) {
-            for (j = 0; j < NUM_VERTS; ++j) {
-                printf(" %d ", D.adj[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");*/
     }
 
     return D;
@@ -59,7 +49,5 @@ static Graph _compute_all_pairs_shortest_paths_(Graph D, const Graph W)
 
 Graph all_pairs_shortest_paths_slow(const Graph w)
 {
-    Graph d = _compute_all_pairs_shortest_paths_(w, w);
-
-    return d;
+    return _compute_all_pairs_shortest_paths_(w, w);
 }

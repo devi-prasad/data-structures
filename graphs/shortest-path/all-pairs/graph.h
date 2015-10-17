@@ -8,9 +8,9 @@
 #define MAX_WALK_LEN (MAX_VERTS * 3)   /* 3 edges per vertex is reasonable */
 #define MAX_LABEL_LEN 16               /* length of a vertex label */
 
-#define INFINITE 0XDEADBEAF
+#define INFINITE 127                   /* largest positive 8-bit value */
 
-typedef int32_t dist_t;
+typedef int8_t dist_t;
 
 struct _graph_ {
     uint8_t  vc;                           /* actual # vertices in the graph */
