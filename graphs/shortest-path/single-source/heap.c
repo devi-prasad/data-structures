@@ -70,6 +70,9 @@ Heap heap_new(Vertex data[], uint32_t len)
     int32_t i;
 
     assert(len > 0 && len < MAX_HEAP_SIZE);
+
+    memset(heap.data, 0, MAX_HEAP_SIZE * sizeof(Vertex));
+    
     for (i = len/2; i > 0; --i) {
         _heapify_(data, len, i);
     }
@@ -147,6 +150,6 @@ void heap_delete(Heap *heap)
 {
     assert(heap_check_valid(heap));
     heap->size = 0;
-    memset(heap->data, 0, MAX_HEAP_SIZE * sizeof(int32_t));
+    memset(heap->data, 0, MAX_HEAP_SIZE * sizeof(Vertex));
     _heap_set_bad_(heap);
 }
