@@ -16,20 +16,45 @@
 | Monday      | 7, September     | BFS implementation.                        |
 | Wednesday   | 9,  September    | List data structure.                       |
 | Friday      | 11, September    | List data structure - implementation.      |
+|             |                  |                                            | 
+| Tests       | 12-15 September  |                                            |
+|             |                  |                                            | 
 | Wednesday   | 16, September    | Binary Search Tree.                        |
 | Friday      | 18, September    | Binary Search Tree - implementation.       |
 |-------------|------------------|--------------------------------------------|
 | Monday      | 21, September    | Minimum Spanning Trees.                    |
 |             |                  | Prim's algorithm. Implementation.          |
 |-------------|------------------|--------------------------------------------|
-| Wednesday   | 23, September    |                                            |
-| Friday      | 25, September    |                                            |
-| Monday      | 28, September    |                                            |
-| Wednesday   | 30, September    |                                            |
+| Wednesday   | 23, September    | C representation of sets.                  |
+|             |                  | We used a simple bit-vector for realizing  |
+|             |                  | set operations.                            |
+|             |                  | We also used C library qsort procedure.    |
+| Friday      | 25, September    | We discussed the relevance of what we      |
+|             |                  | built in the previous lecture.             |
 |             |                  |                                            |
+| Monday      | 28, September    | Implementation of Kruskal's algorith.      |
+|             |                  | Topological sort.                          |
+|             |                  | Discussed strongly connected components.   |
 |             |                  |                                            |
+| Wednesday   | 30, September    | Tarjan's SCC algorithm implementation.     |
 |             |                  |                                            |
+| Friday      | 2, October       | HOLIDAY!!                                  |
+| Monday      | 5, October       | lab assignments; groups; discussion.       |
 |             |                  |                                            |
+| Wednesday   | 7, October       | Heap data structure and the heapify()      |
+|             |                  | algorithm.                                 |
+| Friday      | 9, October       | Heap sort algorithm.                       |
+|             |                  | Discussed good implementation and          |
+|             |                  | engineering techniques.                    |
+|             |                  |                                            |
+| Monday      | 12, October      | Heap implementation is C.                  |
+| Wednesday   | 14, October      | Implementation of priority queues.         | 
+|             |                  |                                            |
+| Friday      | 16, October      | We reviewed the implementation aspects     |
+|             |                  | the heap data structure.                   |
+|             |                  |                                            | 
+| Monday      | 19, October      | Single-source shortest path algorithm.     |
+|             |                  | Dijkstra's algorithm. Implementation.      |
 |             |                  |                                            |
 |             |                  |                                            |
 |             |                  |                                            |
@@ -40,4 +65,5 @@
 |             |                  |                                            |
 |-------------|------------------|--------------------------------------------|
 
-First Internal Tests: September 12 - 15.
+First Internal Tests:  September 12 - 15.
+Second Internal Tests: October 24 - 27.
