@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 #include "graph.h"
 #include "vertex.h"
 #include "heap.h"
@@ -17,40 +18,58 @@ static void _init_single_source_(Vertex verts[], uint32_t len, uint32_t src)
     for (i = 0; i < len; ++i) {
     	verts[i].id = i;
         verts[i].dist = DIST_INFINITE;
-        verts[i].pred = NO_PREDECSSOR;
+        verts[i].pred = NO_PREDECESSOR;
     }
+
     verts[src].dist = 0;
 }
 
-uint32_t find_shortest_path(const Graph g, 
-                            uint32_t src_id,
-                            Vertex verts[],
-                            uint32_t len)
+#include <stdio.h>
+
+static uint32_t _get_index_(Vertex verts[], uint32_t len, uint32_t index)
 {
-	const uint32_t NUM_VERTS = graph_vertex_count(g);
-	assert(len >= NUM_VERTS + 1);
+    uint32_t i;
 
-    if (len < NUM_VERTS + 1) return 0;
+    for (i = 0; i <= len; ++i) {
+       if (verts[i].id == index) return i;
+    }
 
+    fprintf(stderr, "Internal error! No vertex with id %d in the list.\n", index);
+    assert(0);
+    return -1;
+}
+
+Path find_shortest_path(const Graph g, uint32_t src_id)
+{
+	const uint32_t NUM_VERTS = g.vc;
+    Vertex verts[NUM_VERTS + 1];
+
+    Path path = { 0, {{0, 0, 0}, } };
+    
     _init_single_source_(verts + 1, NUM_VERTS, src_id);
 
     Heap verts_heap = heap_new(verts, NUM_VERTS);
-
     while (heap_size(&verts_heap) > 0) {
-        Vertex vertex = heap_extract_min(&verts_heap);
-        uint32_t u, v;
-        for (u = vertex.id, v = 0; v < NUM_VERTS; ++v) {
-            uint32_t w = g.adj[u][v];
-            if (w > 0) {
-                if (verts[v+1].dist > verts[u+1].dist + w) {
-                    verts[v+1].dist = verts[u+1].dist + w;
-                    verts[v+1].pred = u;
+        Vertex vertex = heap_get_min(&verts_heap);
+        if (vertex.dist != DIST_INFINITE) {
+            uint32_t u, v, j;
+            for (u = vertex.id, j = 0; j < NUM_VERTS; ++j) {
+                int32_t w = g.adj[u][j];
+                if (w != 0 && w != DIST_INFINITE) {
+                    v = _get_index_(verts, NUM_VERTS, j); 
+                    if (verts[v].dist > vertex.dist + w) {
+                        verts[v].dist = vertex.dist + w;
+                        verts[v].pred = u;
+                    }
                 }
             }
+            path.verts[path.len] = vertex;
+            ++path.len;
         }
+
+        heap_extract_min(&verts_heap);
     }
-    
     heap_delete(&verts_heap);
 
-    return NUM_VERTS;
+    return path;
 }

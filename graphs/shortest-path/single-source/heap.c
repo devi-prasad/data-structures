@@ -71,14 +71,14 @@ Heap heap_new(Vertex data[], uint32_t len)
 
     assert(len > 0 && len < MAX_HEAP_SIZE);
 
-    memset(heap.data, 0, MAX_HEAP_SIZE * sizeof(Vertex));
+    //memset(heap.data, 0, MAX_HEAP_SIZE * sizeof(Vertex));
     
     for (i = len/2; i > 0; --i) {
         _heapify_(data, len, i);
     }
     heap.size = len;
-    memcpy(heap.data, data, (len+1) * sizeof(Vertex));
-    
+    //memcpy(heap.data, data, (len+1) * sizeof(Vertex));
+    heap.data = data;
     _heap_set_good_(&heap);
 
     return heap;
@@ -120,6 +120,7 @@ Vertex heap_extract_min(Heap *heap)
 
     Vertex min = heap->data[1];
     heap->data[1] = heap->data[heap->size];
+    heap->data[heap->size] = min;
     --heap->size;
     _heapify_(heap->data, heap->size, 1);
     
@@ -149,7 +150,7 @@ Heap* heap_insert(Heap *heap, Vertex vertex)
 void heap_delete(Heap *heap)
 {
     assert(heap_check_valid(heap));
+    memset(heap->data, 0, heap->size * sizeof(Vertex));
     heap->size = 0;
-    memset(heap->data, 0, MAX_HEAP_SIZE * sizeof(Vertex));
     _heap_set_bad_(heap);
 }

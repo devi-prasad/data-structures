@@ -3,8 +3,6 @@
 
 #include "vertex.h"
 
-uint32_t find_shortest_path(const Graph g, 
-                        uint32_t src, 
-                        Vertex verts[], uint32_t len);
+Path find_shortest_path(const Graph g, uint32_t src); 
 
 #endif

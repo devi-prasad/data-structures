@@ -14,7 +14,7 @@
 
 struct _heap_ {
     uint32_t size;
-    Vertex data[MAX_HEAP_SIZE];
+    Vertex *data;
 };
 
 typedef struct _heap_ Heap;
