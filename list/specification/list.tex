@@ -1,0 +1,165 @@
+\documentclass[10pt]{article}
+\usepackage{mathptmx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\renewcommand{\rmdefault}{ptm}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+\title{Formal Specification, Design and Implementation of the List Data Structure}
+\author{
+  M.\, Devi Prasad\\
+  School of Information Sciences, Manipal University.\vspace*{6pt}\\
+  devi.prasad@manipal.edu
+ }
+\date{}
+\maketitle
+
+\begin{abstract}
+We present a formal specification of the \emph{List} data structure. First, we describe the essential properties of the list abstract data type. We subsequently develop a behavioral specification of the ADT. This step introduces a few design decisions that influence the representation and efficiency of operations on lists. This, in turn, helps in shaping a concrete implementation in the C programming language. This entire exercise demonstrates how formal specification may guide different design choices, and thus lead to different implementations.
+\end{abstract}
+
+\section{Introduction}
+Most textbooks employ a pattern in describing data structures: first informally describe the behavior of a particular data structure, and follow it up with an implementation in a high level programming language or pseudo code. The informal descriptions use diagrams, operation traces and textual narratives. The time and space complexity of algorithms, and implementation efficiency are discussed to some extent in many books. The depth and breadth of exposition depends on factors such as author's predispositions and the target audience.
+
+We wish to take a reasonably different approach to the way data structures course is taught. We wish to bring a little more engineering discipline to describing and developing data structures: we first bring out a specification, in some detail, of the interfaces of the underlying ADT. We follow it up with the design of the representation and associated behaviors of the data structure. We finally implement at the least two different versions in order to understand the pros and cons of different implementation strategies.
+
+\section{Notation and Conventions}
+We employ sets, sequences and tuples to develop an expressive formal specification of the list data structure. We use the following notation:\vspace*{6pt}\\
+\noindent\hspace*{32pt}\begin{tabular}{lll}
+  Sequence & $[a_1, \, ..., \, a_n]$ & $where \; 0 \leq n$\vspace*{2pt}\\
+  n-tuple & $(a_1, \, a_2, \, ...,\, a_n)$\\
+\end{tabular}\vspace*{4pt}\\
+
+In the following sections, we will be using sequences to represent the actual data elements held by list instances. An empty list content is represented as $[\,]$ and a non-empty sequence of list elements is shown as $[a_1, \,...\, a_n].$ 
+
+We write $d::s$ to mean a sequence of at least one element with item `d' at the head of the sequence; `s' in this case represents the rest of the sequence which may be empty. 
+
+ Certain list operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{N} \times \{OK, EMPTY\}$ is used to hold the answer ($\mathbb{N}$ component) and the (potential error) status of the operation \texttt{OK} and \texttt{EMPTY}. 
+
+\section{The Definition of List and Result Interfaces}
+  \noindent Lists are very simple data containers. In our definition, new elements can be added to the list at the first and last positions, also called the \emph{head} and \emph{tail} of the list.
+
+  To indicate anomalies that may occur while attempting list operations, we define an auxiliary interface named \textbf{Result}. A Result object indicates either the answer of the successful operation or an anomalous state.   
+  
+  \subsection{The List Interface}
+  \noindent A list instance has no logical limit on its size. It may grow or shrink in size. The list constructor has no arguments, and thus, has the following signature:
+  \vspace*{6pt}\\\hspace*{32pt}\(
+  \textbf{new}: \mathbf{()} \rightarrow \mathrm{List}
+  \)\vspace*{6pt}\\
+  We define only a few operations to inspect the state of a list instance.
+  \vspace*{6pt}\\\(
+      \hspace*{32pt}\textbf{empty}: \mathrm{List} \rightarrow \mathrm{Boolean}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{full}: \mathrm{List} \rightarrow \mathrm{Boolean}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{length}:\mathrm{List} \rightarrow \mathbb{N}\vspace*{6pt}\\
+  \)
+The \textbf{head} and \textbf{tail} operations access the data stored at the first and last positions in the array: 
+\vspace*{6pt}\\\(
+      \hspace*{32pt}\textbf{head}: \mathrm{List} \rightarrow \mathrm{Result}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{tail}: \mathrm{List} \rightarrow \mathrm{Result}\vspace*{6pt}\\
+\)
+The \textbf{add\_head} and \textbf{add\_tail} operations mutate the list. On an empty list, \textbf{remove\_head} and \textbf{remove\_tail} indicate the status as EMPTY in the Result component.\\
+\vspace*{4pt}\\\(
+     \hspace*{32pt}\textbf{add\_head}: \mathrm{List} \times \mathbb{N} \rightarrow \mathrm{List}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{add\_tail}: \mathrm{List} \times \mathbb{N} \rightarrow \mathrm{List}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{remove\_head}: \mathrm{List} \rightarrow \mathrm{List \times Result}\vspace*{6pt}\\
+      \hspace*{32pt}\textbf{remove\_tail}: \mathrm{List} \rightarrow \mathrm{List \times Result}
+  \)
+  
+  \subsection{The Result Interface}
+  The \textbf{Result} interface has a constructor, and value and status component extractors:
+  \vspace*{6pt}\\\(
+  \hspace*{32pt}\textbf{result}: \mathbb{N} \times \mathrm{Status} \rightarrow \mathrm{Result}\vspace*{4pt}\\
+  \hspace*{32pt}\textbf{val}: \mathrm{Result} \rightarrow \mathbb{N}\vspace*{4pt}\\
+  \hspace*{32pt}\textbf{status}: \mathrm{Result} \rightarrow \mathrm{Status}
+  \)\vspace*{6pt}  
+  
+  \textbf{Status} is a set of two values that indicate whether an operation succeeded or not: 
+   \vspace*{6pt}\\\(\hspace*{32pt}\mathrm{Status} = \{OK, \; EMPTY\} \)
+
+  \section{The Semantics of List Operations}
+  \noindent We use sequences to represent lists. So, \textbf{new} creates an empty sequence:
+    \[
+        \mathtt{\mathbf{new}()} = [\;] 
+    \]
+    
+  \noindent We define two state inspector operations, \emph{empty} and \emph{full}, by pattern-matching over the structure of list.
+    \[
+        \mathtt{\mathbf{empty}(list)} = \begin{cases} true & \mbox{if  } \mathtt{list} = [\;]
+        \vspace*{6pt}\\ 
+        false & \mbox{otherwise}. \end{cases} 
+    \]
+
+  \noindent In our definition, there is no logical limit on the capacity of list instances:
+    \[
+        \mathtt{\mathbf{full}(list)} = false 
+    \]
+    
+  \noindent The \textbf{length} operation is inductively defined over the list structure. The length of an empty list is 0, and the length of a general list is one more than the length of the list obtained by removing its head. 
+    \[
+        \mathtt{\mathbf{length}(list)} = \begin{cases}
+            0 & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+            1 + \mathtt{\mathbf{length}(list')} & \mbox{if } \mathtt{list = \_ \,::\, list'}\\
+        \end{cases}\vspace*{6pt}\\
+    \]
+
+  \noindent Reading the value at the head of the list is trivial:
+    \[
+        \mathtt{\mathbf{head}(list)} = \begin{cases}
+            (\_, \,EMPTY) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+            (x, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'}\\
+        \end{cases}\vspace*{6pt}\\
+    \]
+
+  \noindent Accessing the tail of the list requires careful thinking. Since we have not defined an operation to quickly reach the end of the list, we need to iterate over the entire list. We specify this operation in three separate cases:
+    \[
+        \mathtt{\mathbf{tail}(list)} = \begin{cases}
+            (\_, \,EMPTY) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+            (\mathtt{x}, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
+                                    & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{tail}(list')} = (\_, \, EMPTY)\vspace*{6pt}\\
+            (\mathtt{y}, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
+                                    & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{tail}(list')} = (\mathtt{y}, \, OK)\\
+        \end{cases}\vspace*{2pt}\\
+    \]
+  \noindent Let us try to understand the three cases shown above. The case of an empty list is trivial. The second case deals with (sub)lists that hold only one element. This, in fact, may represent the final suffix of the sequence of elements - one that contains the last element of the list. The third case is the most common case wherein we strip the head of the list and look for the tail element in the rest of the list, named $\mathtt{list'}$, in the above. The result of this step defines the result of the entire operation.
+
+    We will now specify two simple operations: \textbf{add\_head} and \textbf{remove\_head}. We should keep in mind that the former simply returns a list while the latter answers with a 2-tuple containing the new list and the status of the operation:
+    \[
+        \mathtt{\mathbf{add\_head}(list, x)} = \mathtt{x \, :: \, list}
+    \]
+    \[
+        \mathtt{\mathbf{remove\_head}(list)} = \begin{cases}
+            (\, [\;], \; (\_, \,EMPTY)\,) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+            (\, \mathtt{list'}, \; (\mathtt{x}, \,OK)\,) & \mbox{if } \mathtt{list = x\,::\,list'}\\
+        \end{cases}\vspace*{2pt}\\
+    \]
+
+    The specification of \textbf{add\_tail} operation is reasonably easy. This operation returns a new list containing the given element in the tail position. Because it is not possible (in our case, in this specification) to simply access the last position in the list, we need to iterate over list's structure.
+    \[
+        \mathtt{\mathbf{add\_tail}(list, x)} = \begin{cases}
+            [\,\mathtt{x}\,] & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+            \mathtt{a}\,::\, \mathtt{\mathbf{add\_tail}(list', x)} & \mbox{if } \mathtt{list = a\,::\,list'}\\
+        \end{cases}\vspace*{2pt}
+    \]    
+    Adding an element to an empty list yields a list containing the element. The most common scenario, represented by the second case, requires attention. Notice how we retain the structure of the origin list. As long as the list is not empty we keep prodding. We retain the contents of original list by appending the head of the list to the result of adding the given element to the tail of the current list (referred to as $\mathtt{list'}$ above). 
+
+    Finally, we come to the specification of \textbf{remove\_tail}. The basic idea is to iterate over the list and when we reach the last element, return an empty list as an indication of dropping the last element from the result. In the other case, we retain contents of the original list just as \textbf{add\_tail} does.
+    
+    \[
+    \mathtt{\mathbf{remove\_tail}(list)} = \begin{cases}
+        (\, [\;], \; (\_, \,EMPTY)\,) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+        (\, [\;], \; (\mathtt{x}, \, OK)\,) & \mbox{if } \mathtt{list = x\,::\,list'}\\
+                                                & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{remove\_tail}(list')} = ([\;], \,(\_, \,EMPTY)\,)\vspace*{6pt}\\
+        (\, \mathtt{x\,::\,list''}, \; (\mathtt{y}, \, OK)\,) & \mbox{if } \mathtt{list = x\,::\,list'}\\
+                                                   & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{remove\_tail}(list')} = (\mathtt{list''}, \,(\mathtt{y},\, OK))
+    \end{cases}\vspace*{2pt}\\
+    \]
+  \noindent Note that in the second case, we return a Result tuple containing the element in the end of the given list. This is the case that detects the singleton list (that is, a list of only one element). Although the Result tuple contains the last element, we are actually interested in the first component - the list component which is empty in this particular case. In other words, this case strips the last element from the list and returns an empty list as its answer.
+
+  In the third case, \textbf{remove\_tail} is recursively called to process the sublist. The head element, \texttt{x}, of the current list is appended to $\mathtt{list''}$, the list returned by processing the sublist. The element, \texttt{y}, which was at the tail of the original list, is propagated all way up the call chain. 
+
+\end{document}
+
+
+
