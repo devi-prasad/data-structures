@@ -34,7 +34,7 @@ static uint32_t _get_index_(Vertex verts[], uint32_t len, uint32_t index)
        if (verts[i].id == index) return i;
     }
 
-    fprintf(stderr, "Internal error! No vertex with id %d in the list.\n", index);
+    fprintf(stderr, "Internal error! No vertex with id %d in the heap!\n", index);
     assert(0);
     return -1;
 }
