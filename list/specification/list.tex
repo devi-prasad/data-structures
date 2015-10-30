@@ -108,7 +108,7 @@ The \textbf{add\_head} and \textbf{add\_tail} operations mutate the list. On an 
     \[
         \mathtt{\mathbf{head}(list)} = \begin{cases}
             (\_, \,EMPTY) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
-            (x, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'}\\
+            (x, \,OK) & \mbox{if } \mathtt{list = x \, ::\, list'}\\
         \end{cases}\vspace*{6pt}\\
     \]
 
@@ -116,9 +116,9 @@ The \textbf{add\_head} and \textbf{add\_tail} operations mutate the list. On an 
     \[
         \mathtt{\mathbf{tail}(list)} = \begin{cases}
             (\_, \,EMPTY) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
-            (\mathtt{x}, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
+            (\mathtt{x}, \,OK) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
                                     & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{tail}(list')} = (\_, \, EMPTY)\vspace*{6pt}\\
-            (\mathtt{y}, \,OK)) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
+            (\mathtt{y}, \,OK) & \mbox{if } \mathtt{list = x \, ::\, list'} \\
                                     & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{tail}(list')} = (\mathtt{y}, \, OK)\\
         \end{cases}\vspace*{2pt}\\
     \]
@@ -148,11 +148,11 @@ The \textbf{add\_head} and \textbf{add\_tail} operations mutate the list. On an 
     
     \[
     \mathtt{\mathbf{remove\_tail}(list)} = \begin{cases}
-        (\, [\;], \; (\_, \,EMPTY)\,) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
-        (\, [\;], \; (\mathtt{x}, \, OK)\,) & \mbox{if } \mathtt{list = x\,::\,list'}\\
-                                                & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{remove\_tail}(list')} = ([\;], \,(\_, \,EMPTY)\,)\vspace*{6pt}\\
-        (\, \mathtt{x\,::\,list''}, \; (\mathtt{y}, \, OK)\,) & \mbox{if } \mathtt{list = x\,::\,list'}\\
-                                                   & \hspace*{10pt}\wedge\;\; \mathtt{\mathbf{remove\_tail}(list')} = (\mathtt{list''}, \,(\mathtt{y},\, OK))
+        (\, [\;], \, (\_, \,EMPTY)\,) & \mbox{if } \mathtt{list} = [\;]\vspace*{6pt}\\
+        (\, [\;], \, (\mathtt{x}, \, OK)\,) & \mbox{if } \mathtt{list = x\,::\,l'} \;\; \; \wedge\\
+                                                & \hspace*{4pt}\mathtt{\mathbf{remove\_tail}(l')} = ([\;], \,(\_, \,EMPTY)\,)\vspace*{6pt}\\
+        (\, \mathtt{x::l''}, \, (\mathtt{y}, OK)\,) & \mbox{if } \mathtt{list = x\,::\,l'} \; \; \; \wedge\\
+                                                   & \hspace*{4pt}\mathtt{\mathbf{remove\_tail}(l')} = (\mathtt{l''}, \,(\mathtt{y},\, OK)\,)
     \end{cases}\vspace*{2pt}\\
     \]
   \noindent Note that in the second case, we return a Result tuple containing the element in the end of the given list. This is the case that detects the singleton list (that is, a list of only one element). Although the Result tuple contains the last element, we are actually interested in the first component - the list component which is empty in this particular case. In other words, this case strips the last element from the list and returns an empty list as its answer.
