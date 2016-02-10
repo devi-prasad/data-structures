@@ -32,12 +32,20 @@ We employ sets, sequences and tuples to develop an expressive formal specificati
   n-tuple & $(a_1, \, a_2, \, ...,\, a_n)$\\
 \end{tabular}\vspace*{4pt}\\
 
-In the following sections, we will be using sequences to represent the actual data elements held by stack instances. An empty stack content is represented as $[\,]$ and a non-empty sequence of stack elements is shown as $[a_1, \,...\, a_n].$
+In the following sections, we will be using sequences to represent the content of stack instances. An empty stack is denoted by $[\,]$ and a non-empty stack is shown as $[a_1, \,...\, a_n]$ where $a_n$ represents the top element of the stack. 
 
- Certain stack operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{R} \times \mathbb{N}$ is used to hold the value ($\mathbb{R}$ component) and the (potential error) status \texttt{OK}, \texttt{FULL}, and \texttt{EMPTY}. 
+At times, we will use the variable $\epsilon$ to represent the empty sequence (or empty stack, in this case), and $\sigma$ to represent a generic sequence. We write \#$\sigma$ to mean the length of a sequence represented by $\sigma$. An empty sequence has zero length.
 
-\section{The Definition of Stack and Result Interfaces}
-  \noindent The stack interface consists of a constructor function, three inspector functions, and two procedures that update the state of an instance. We define an auxiliary interface named `Result' to represent either the answer or the error returned by certain operations.   
+Finally, the \emph{append} operator, \textbf{::}, appends an element to the end of the given list. Thus,\vspace*{6pt}\\
+\noindent\hspace*{32pt}\begin{tabular}{llllll}
+    if &$\sigma$ & = & $[a_1, \,...,\, a_n]$  \;\;\; & and \;\; &\#$\sigma$ = n\vspace*{4pt}\\
+    then &$\sigma'$ & = & $\sigma$\,\textbf{::}\,b = $[a_1, \,...,\, a_n,\,b]$ & and & \#$\sigma'$ = n+1\\
+\end{tabular}\vspace*{4pt}\\
+
+Certain stack operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{R} \times \mathbb{N}$ is used to hold the value ($\mathbb{R}$ component) and the (potential error) status \texttt{OK}, \texttt{FULL}, and \texttt{EMPTY}. 
+
+\section{The Specification of Stack and Result Interfaces}
+  \noindent The stack interface specification includes a constructor function, three inspector functions, and two procedures that update the state of an instance. We define an auxiliary interface named `Result' to represent either the answer or the error returned by certain operations.   
   
   \subsection{The Stack Interface}
   \noindent While instantiating a stack object, we indicate the desired depth of the stack. 
@@ -68,7 +76,7 @@ In the following sections, we will be using sequences to represent the actual da
   \hspace*{32pt}\textbf{full}: \mathrm{Stack} \rightarrow \mathrm{Boolean}
   \)\vspace*{6pt}
 
-  \subsection{The Result Interface}
+\subsection{The Result Interface}
   The \textbf{Result} interface has a constructor, and value and error component extractors:
   \vspace*{6pt}\\\(
   \hspace*{32pt}\textbf{result}: \mathbb{R} \times \mathrm{Status} \rightarrow \mathrm{Result}\vspace*{4pt}\\
@@ -79,33 +87,87 @@ In the following sections, we will be using sequences to represent the actual da
   \textbf{Status} is a set of three values representing the state after performing an operations on a stack instance: 
    \vspace*{6pt}\\\(\hspace*{32pt}\mathrm{Status} = \{OK, \; EMPTY, \; FULL\} \)
 
-  \section{The Semantics of Stack Operations}
-    While instantiating a new stack, there is a provision to set the actual depth of the stack to a specific value (which is passed as an argument to the operation). If this value exceeds a limit defined by a particular implementation, the size is set to that limiting value (referred to as MAX\_DEPTH below).\vspace*{3pt}\\
+  \section{An Abstract Specification of Stack Behavior}
+    While instantiating a new stack, there is a provision to set the actual depth of the stack to a specific value (which is passed as an argument to the operation). If this value exceeds a limit defined by a particular implementation, the size is set to that limiting value (referred to as MAX\_DEPTH below).
+
+    \[
+        \mathtt{\mathbf{new}(size)} = \begin{cases} (size, \,  \epsilon) &\mbox{if\;\;} 0 < size < \mathtt{MAX\_DEPTH}. \vspace*{6pt}\\ 
+        (\mathtt{MAX\_DEPTH}, \, \epsilon) & \mbox{otherwise}. \end{cases} 
+    \]
+    
+    A stack instance is represented as a 2-tuple. The first component represents the capacity of this stack instance. The second component is a sequence representing the actual contents of the stack instance. When a stack object is freshly instantiated, its content is an empty sequence. 
+
+    The following invariants hold for stack instances:
+    \[
+        0 \leq \#\sigma \leq size \leq \mathtt{MAX\_DEPTH}
+    \]
+    \[
+        0 < size \leq \mathtt{MAX\_DEPTH}
+    \]
+
+    We define two state inspector operations, \emph{empty} and \emph{full}, by pattern-matching over the representation of stack instances. Note that a freshly created stack object has empty content.
+    
+    \[
+        \mathtt{\mathbf{empty}(stk)} = \begin{cases} True & \mbox{if\;\;} \mathtt{stk} = (size, \,\epsilon). \vspace*{6pt}\\ 
+        False & \mbox{otherwise}. \end{cases} 
+    \]
+  
+    A stack instance is full when there is no room to hold a new element.
+    \[
+        \mathtt{\mathbf{full}(stk)} = \begin{cases} True & \mbox{if\;\;} \mathtt{stk} = (size, \,\sigma) \;\; \wedge \;\; 0 < \#\sigma = size. \vspace*{6pt}\\
+        False & \mbox{otherwise}. \end{cases} 
+    \]
+
+    Attempt to push a new element will succeed if the stack is not already full. This is indicated by the OK status component of the answer. In the other case where stack is full, the status FULL is returned.
+    \[
+        \mathtt{\mathbf{push}(stk,\, d)} = \begin{cases} ((size, \,\sigma \,\mathbf{::}\, d),  {\textcolor{blue}{(\_, \,OK)}}) & \mbox{if\;\;} \mathtt{stk} = (size, \,\sigma) \;\; \wedge \;\; 0 \leq \#\sigma < size. \vspace*{6pt}\\ 
+        (\mathtt{stk},\;{\textcolor{red}{(\_, \,FULL)}} \; ) & \mbox{if\;\;} \mathtt{stk} = (size, \,\sigma) \;\; \wedge \;\; 0 < \#\sigma = size. \end{cases} 
+    \]
+
+    The \textbf{pop} operation succeeds if the stack in not empty. Again, we should convince that equational reasoning holds if we plug \textbf{empty}, from its definition above, on the right side conditionals in the following:
+    \[
+        \mathtt{\mathbf{pop}(stk)} = \begin{cases} ((size, \, \sigma), {\textcolor{blue}{(d, OK)}}) & \mbox{if\;\;} \mathtt{stk} = (size, \sigma \,\mathbf{::} \,d) \;\; \wedge \;\; 0 
+        \leq \#\sigma < size. \vspace*{6pt}\\ 
+        (\mathtt{stk},\,{\textcolor{red}{(\_,\; EMPTY)}})  & \mbox{if\;\;}\mathtt{stk} = (size, \, \epsilon). \end{cases} 
+    \]
+
+    The \textbf{peek} operation only reads the value on the top of the stack. It is defined to return a value when the stack is not empty. Therefore, its preconditions are same as that of the \textbf{pop} operation. However, it does not mutate the state of the stack instance.
+    \[
+        \mathtt{\mathbf{peek}(stk)} = \begin{cases} (\; \mathtt{stk}, \; {\textcolor{blue}{(d, OK)}}\;) & \mbox{if\;\;} \mathtt{stk} = (size, \sigma\,\mathbf{::}\,d) \;\; \wedge\; \; 0 \leq \#\sigma < size. \vspace*{6pt}\\ 
+        (\mathtt{stk},\; {\textcolor{red}{(\_,\; EMPTY)}}\;)  & \mbox{if\;\;} \mathtt{stk} = (size,\,\epsilon). \end{cases} 
+    \]
+
+  \section{A Refinement}
+    Based on the abstract definitions given in the previous section, we now derive more concrete versions of the same operations. We will call this a \emph{general refinement}. This is not a formally rigorous approach to deriving more concrete implementations from more abstract specifications. Our methods depends mostly on a programmer's intuition to guide the process.
+
+    Popular imperative languages have little or no direct support for sequences and append operations that we used in the previous section. These languages support either safe or unsafe versions of array types. We shall assume here that we have at our disposal unsafe arrays with no direct support for bounds checking. Therefore, we shall use a representation that enforces safety of stack operations.
+
+    In the following refinement, a stack is represented by a 3-tuple; such a tuple is initialized when a fresh stack instance is created:
     \[
         \mathtt{\mathbf{new}(size)} = \begin{cases} (size, [\,], -1) &\mbox{if\;\;} 0 < size < \mathtt{MAX\_DEPTH}. \vspace*{6pt}\\ 
         (\mathtt{MAX\_DEPTH}, [\,], -1) & \mbox{otherwise}. \end{cases} 
     \]
-    \vspace*{3pt}\\
-    A stack instance is represented as a 3-tuple. The first component represents the number of items this stack instance may hold. The second component is a sequence representing the actual contents of the stack instance. When a stack object is freshly instantiated, its contents will be empty. The third component represents the index of the topmost element of the stack. It will be -1 when a stack object is instantiated. 
+    The first component of this 3-tuple holds the capacity of the stack object. The second component is an array store for the contents of the stack. The content of a newly created stack is empty. The third component represents the index of the topmost element of the stack. It is -1 when a stack object is instantiated. 
 
-    The following two invariants hold for a stack instance:
-    \(
-    \)
+    The following invariants hold for stack instances:
+    \[
+        -1 \leq top < size \leq \mathtt{MAX\_DEPTH}
+    \]
+    \[
+        0 < size \leq \mathtt{MAX\_DEPTH}
+    \]
     
-
     We define two state inspector operations, \emph{empty} and \emph{full}, by pattern-matching over the representation structure of stack instances. It is appropriate, at this point, to note that a freshly created stack instance is empty.
-    \vspace*{3pt}\\
+
     \[
         \mathtt{\mathbf{empty}(stk)} = \begin{cases} True & \mbox{if  } \mathtt{stk} = (size, [\,], -1). \vspace*{6pt}\\ 
         False & \mbox{otherwise}. \end{cases} 
     \]
-    \vspace*{3pt}\\
 
     A stack instance is full when there is no room to hold a new element. Recall that the stack top always points to the most recently filled slot.
 
     \[
-        \mathtt{\mathbf{full}(stk)} = \begin{cases} True & \mbox{if  } \mathtt{stk} = (size, [a_0, \, \ldots, \, a_n], n) \\
-            &\hspace*{10pt}\wedge \; \; (n+1) = size. \vspace*{6pt}\\ 
+        \mathtt{\mathbf{full}(stk)} = \begin{cases} True & \mbox{if  } \mathtt{stk} = (size, [a_0, \, \ldots, \, a_n], n)  \;\; \wedge \;\; (n+1) = size. \vspace*{6pt}\\ 
         False & \mbox{otherwise}. \end{cases} 
     \]
     
@@ -132,8 +194,6 @@ In the following sections, we will be using sequences to represent the actual da
         \mathtt{\mathbf{peek}(stk)} = \begin{cases} (\; \mathtt{stk}, \; {\textcolor{blue}{(d, OK)}}\;) & \mbox{if } \mathtt{stk} = (size, [a_0,\dots,a_n, d], n+1)\\ & \hspace*{10pt}\wedge\; \; (n+1) \geq 0 . \vspace*{6pt}\\ 
         (\mathtt{stk},\; {\textcolor{red}{(\_,\; EMPTY)}}\;)  & \mbox{if }\mathtt{stk} = (size, [\,], -1). \end{cases} 
     \]
-
-
 
 \end{document}
 
