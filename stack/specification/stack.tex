@@ -21,9 +21,9 @@ We present a formal specification of the \emph{Stack} data structure. First, we 
 \end{abstract}
 
 \section{Introduction}
-Most textbooks employ a pattern in describing data structures: first informally describe the behavior of a particular data structure, and follow it up with an implementation in a high level programming language or pseudo code. The informal descriptions use diagrams, operation traces and textual narratives. The time and space complexity of algorithms, and implementation efficiency are discussed to some extent in many books. THe depth and breadth of exposition depends on factors such as author's predispositions and the target audience.
+Most textbooks employ a pattern in describing data structures: first informally describe the behavior of a particular data structure, and follow it up with an implementation in a high level pseudo code or a programming language. The details of the data structure and its operations are informally described using text narratives, diagrams and execution traces of sample runs. 
 
-We wish to take a reasonably different approach to the way data structures course is taught. We wish to bring a little more engineering discipline to describing and developing data structures: we first bring out a specification, in some detail, of the interfaces of the underlying ADT. We follow it up with the design of the representation and associated behaviors of the data structure. We finally implement at the least two different versions in order to understand the pros and cons of different implementation strategies.
+We wish to take a reasonably different approach to the way data structures course is taught. We wish to bring a little more engineering discipline to describing and developing data structures: we first bring out a specification, in some detail, of the interfaces of the underlying ADT. We follow it up with the design of the representation and associated behaviors of the data structure. We then develop a verified implementation of the same using Dafny language. We gradually refine the specification and the verified counterpart. We finally implement, at the least, two different versions, in the C programming language, in order to understand the pros and cons of different implementation strategies.
 
 \section{Notation and Conventions}
 We employ sets, sequences and tuples to develop an expressive formal specification of the Stack data structure. We use the following notation:\vspace*{6pt}\\
@@ -43,6 +43,40 @@ Finally, the \emph{append} operator, \textbf{::}, appends an element to the end 
 \end{tabular}\vspace*{4pt}\\
 
 Certain stack operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{R} \times \mathbb{N}$ is used to hold the value ($\mathbb{R}$ component) and the (potential error) status \texttt{OK}, \texttt{FULL}, and \texttt{EMPTY}. 
+
+\section{A Very Abstract Specification of the Stack Interface}
+\noindent In this section, we develop an abstract specification and definition of stacks. It is abstract in the sense that it puts no limits on the size of the stacks and does not defensively check for the preconditions of some operations. The stack interface specification includes a constructor function, three inspector functions, and two procedures that update the state of an instance. 
+
+\subsection{The Stack Interface}
+\noindent The stack constructor function does not receive any arguments:
+\vspace*{6pt}\\\hspace*{32pt}\(
+\textbf{new}: \mathbf{()} \rightarrow \mathrm{Stack}
+\)\vspace*{6pt}\\
+This design does not impose any limit on the depth of stack instances. Therefore, in principle, there is no fundamental limit on the number of elements that may be stacked up!
+
+Stack allows accessing the value of only the topmost element. The push operation puts an element on the top of the stack. Assuming that we use stacks to hold real numbers, this operation may be expressed as
+\vspace*{6pt}\\\hspace*{32pt}\(
+\textbf{push}: \mathrm{Stack} \times \mathbb{R} \rightarrow \mathrm{Stack}
+\)\vspace*{6pt}\\
+Since the stack is unbounded, this operations always succeeds.
+
+The \textbf{peek} operation reads the value on the top of the stack. The precondition of this function is that the stack must not be empty. This operation does not mutate the stack.
+\vspace*{6pt}\\\hspace*{32pt}\(
+\textbf{peek}: \mathrm{Stack} \rightarrow {\mathbb{R}}
+\)\vspace*{6pt}
+
+The operation {\textbf{pop}} removes the topmost element from the stack and return the new stack. The precondition of this function is that the stack must not be empty.
+\vspace*{6pt}\\\hspace*{32pt}\(
+\textbf{pop}: \mathrm{Stack} \rightarrow \mathrm{Stack}
+\)\vspace*{6pt}
+
+In the specification so far, we have assumed that the callers of {\textbf{peek}} and {\textbf{pop}} operations observe the specified preconditions. The following two functions allow callers to check the state of the stack before attempting stack mutation.
+\vspace*{6pt}\\\(
+\hspace*{32pt}\textbf{empty}: \mathrm{Stack} \rightarrow \mathrm{Boolean}\vspace*{4pt}\\
+\hspace*{32pt}\textbf{full}: \mathrm{Stack} \rightarrow \mathrm{Boolean}
+\)\vspace*{6pt}
+
+It should be noted that in the current specification, stacks are unbounded, and therefore, we could provide a trivial implementation for function {\textbf{full}} to invariably return false.
 
 \section{The Specification of Stack and Result Interfaces}
   \noindent The stack interface specification includes a constructor function, three inspector functions, and two procedures that update the state of an instance. We define an auxiliary interface named `Result' to represent either the answer or the error returned by certain operations.   
