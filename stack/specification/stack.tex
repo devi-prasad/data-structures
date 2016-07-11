@@ -44,12 +44,12 @@ Finally, the \emph{append} operator, \textbf{::}, appends an element to the end 
 
 Certain stack operations defined in the next section employ 2-tuples to represent the \texttt{Result} of their execution. A 2-tuple of type $\mathbb{R} \times \mathbb{N}$ is used to hold the value ($\mathbb{R}$ component) and the (potential error) status \texttt{OK}, \texttt{FULL}, and \texttt{EMPTY}. 
 
-\section{A Specification of Unchecked Unbounded Stacks}
+\section{A Specification of Unchecked Unbounded Stack}
 \noindent In this section, we develop a specification of the stack data structure that does not limit the number of elements stacks may hold. It is abstract in the sense that it only specifies the intended behavior of the operations while not suggesting any implementation detail. As a part of its specification, each operation defines \emph{preconditions} that must hold if it has to take effect. The specification is abstract also in the sense that operations do not signal errors if the preconditions don't hold good. Later sections will refine this definition as the specifications incorporate more and more implementation details.
 
 The stack interface specification includes a constructor function, three inspector functions, and two procedures that update the state of an instance. 
 
-\subsection{The Stack Interface}
+\subsection{The Interface Definition of Unbounded Stack}
 \noindent The stack constructor function does not receive any arguments:
 \[
 \textbf{new}: \mathbf{()} \rightarrow \mathrm{Stack}
@@ -83,7 +83,7 @@ In the specification so far, we have assumed that the callers of {\textbf{peek}}
 
 \noindent In the current specification, stacks are unbounded, and therefore, the implementation of function {\textbf{full}} trivially returns \emph{false}!
 
-\subsection{The Definition of the Behavior of Unbounded Stacks}
+\subsection{The Behavior of Unchecked Unbounded Stack}
 What should the stack constructor function return? Note that a stack instance is empty when it is freshly created. Therefore, operation \textbf{new} is defined simply as returning an empty sequence:
 \[
     \mathtt{\mathbf{new}()} = \epsilon
@@ -106,53 +106,87 @@ The \textbf{push} operation appends data to the unbounded sequence:
 
 The \textbf{peek} operation returns the last element in the sequence. It does not modify the stack in any way. Also, it is defined only when the precondition (that the sequence has at least one element) holds:
 \[
-    \mathtt{\mathbf{peek}(stk)} = d \;\;\;\;\; \mbox{if\;\;} \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; 0 \leq \#\sigma
+    \mathtt{\mathbf{peek}(stk)} = d \;\;\;\;\; \mbox{if\;\;} \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; \#\sigma \geq 0
 \]
 
-The \textbf{pop} operations removes the most recently added element from the sequence. It is defined only when the precondition (that the sequence is non-empty) holds, just as in the case of \textbf{peek} operation:
+The \textbf{pop} operation returns the stack after removing  the topmost element. It is defined only when the precondition (that the sequence is non-empty) holds, just as in the case of \textbf{peek} operation:
 \[
-    \mathtt{\mathbf{pop}(stk)} = \sigma \;\;\;\;\; \mbox{if\;\;} \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; 0 \leq \#\sigma
+    \mathtt{\mathbf{pop}(stk)} = \sigma \;\;\;\;\; \mbox{if\;\;} \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; \#\sigma \geq 0
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A Refinement - Checked Unbounded Stacks}
+\section{Refinement 1 - Checked Unbounded Stack}
 \noindent In the previous section, we showed a version of specification that does not require \textbf{peek} and \textbf{pop} operations to guard themselves against the calls that may be wrong. In other words, these two operations are undefined if they are called against an empty stack. The client is required to check that the preconditions hold before invoking these operations.
 
-In this section, we \emph{refine} the previous specification to handle these cases more gracefully. We will require our stacks to defend themselves against calls that violate preconditions.
+In this section, we \emph{refine} the previous specification so the operations mentioned above maintain the invariants and protect the representation, in cases where preconditions are not observed.
 
-The basic idea is to augment the Stack interface with a Result component to indicate the status of the attempted operation.  
+\subsection{The Definition of Checked Unbounded Stack Interface}
+The basic idea is to augment the Stack interface with a status component to indicate if the  attempted operation succeeded or failed. If the preconditions are satisfied, the caller received a symbolic OK status. A result status EMPTY is communicated if preconditions don't hold.
 
+We define the set \textbf{Status} of two values representing the state after performing \textbf{peek} or \textbf{pop} operations:
+\[
+    \mathrm{Status} = \{ OK, \; EMPTY \}
+\]
 
+Note that only \textbf{peek} and \textbf{pop} operations are affected. We reflect the enhancement in their interface:
+\[
+\textbf{peek}: \mathrm{Stack} \rightarrow \mathrm{Status} \times {\mathbb{R}}
+\]
 
+The first component of the result indicates whether \textbf{peek} succeeded or failed. When the operation succeeds, the second component contains the value from the top of the stack. When the stack is empty, the first component of the answer will be \emph{EMPTY} and the second component is undefined, that is, it is meant to be ignored.
 
+\[
+\textbf{pop}: \mathrm{Stack} \rightarrow \mathrm{Status} \times \mathrm{Stack}
+\]
 
+When \textbf{pop} succeeds, the second component represents the stack obtained by removing the topmost element. When the stack is empty, the first component of the answer will be \emph{EMPTY} and the second component represents the same empty stack.
 
+\subsection{The Behavior of Checked Unbounded Stack}
+The \textbf{peek} operation returns the last element in the sequence. If the stack is empty it returns the status \emph{EMPTY} and the second component of the answer is undefined (indicated as "$\_$" in the following):
 
-\section{The Specification of Stack and Result Interfaces}
-  \noindent The stack interface specification includes a constructor function, three inspector functions, and two procedures that update the state of an instance. We define an auxiliary interface named `Result' to represent either the answer or the error returned by certain operations.   
+\[
+    \mathtt{\mathbf{peek}(stk)} = \begin{cases} (OK, \; d) & \mbox{if } \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; \#\sigma \geq 0\\ 
+    (EMPTY, \; \_)  & \mbox{if }\mathtt{stk} = \epsilon. \end{cases} 
+\]
+
+The \textbf{pop} operations removes the most recently added element from the sequence. It is defined only when the precondition (that the sequence is non-empty) holds, just as in the case of \textbf{peek} operation:
+\[
+    \mathtt{\mathbf{pop}(stk)} = \begin{cases} (OK, \; \sigma) & \mbox{if } \mathtt{stk} = \sigma \,\mathbf{::} \,d \;\; \wedge \;\; \#\sigma \geq 0\\ 
+    (EMPTY, \; \mathtt{stk})  & \mbox{if }\mathtt{stk} = \epsilon. \end{cases} 
+\]
+
+%It should be noted that this new specification defines a proper subset of behaviors %permitted in the previous specification. We indicate this as follows:
+%\[
+%    Spec_{checked\_unbounded\_stack} \Longrightarrow Spec_{unbounded\_stack}
+%\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Refinement 2 - Checked Bounded Stack}
+  If we restrict the depth of a stack to an arbitrary user-defined value, the definitions developed so far need to be suitably modified. These modifications take account account the fact that in a bounded stack, both \textbf{push} and \textbf{pop} operation may fail. The former fails when the stack has no room left to hold new element, and the latter operation fails when the stack us empty. In this section we carefully develop the changes required in the interface and the behavior definition.
   
-  \subsection{The Stack Interface}
-  \noindent While instantiating a stack object, we indicate the desired depth of the stack. 
+  \subsection{The Checked Bounded Stack Interface}
+  \noindent While instantiating a stack object, we indicate the desired depth of the stack. Note this definition allows two stack instances to have different depths.
   \vspace*{6pt}\\\hspace*{32pt}\(
   \textbf{new}: \mathbb{N} \rightarrow \mathrm{Stack}
   \)\vspace*{6pt}\\
-  The design as well as the implementation may choose to impose a limit on the depth of stack instances. The specified size or depth value will be stored as a part of stack's internal representation.  
+  The design as well as the implementation may choose to impose a ceiling on the maximum depth of stack instances. The specified size or depth value will be stored as a part of stack's internal representation.  
 
-  Stack allows accessing the value of only the topmost element. An attempt to \textbf{push} an element may succeed if the stack has room for this element, or it may fail if the stack is full. Assuming that we will use our stacks to hold real numbers, this operation may be expressed so:
+  Stack allows accessing the value of only the topmost element. An attempt to \textbf{push} an element may succeed if the stack has room for the new element, or it may fail if the stack is already full. Assuming that we will use our stacks to hold real numbers, this operation may be expressed so:
   \vspace*{6pt}\\\hspace*{32pt}\(
-  \textbf{push}: \mathrm{Stack} \times \mathbb{R} \rightarrow \mathrm{Stack \times Result}
+  \textbf{push}: \mathrm{Stack} \times \mathbb{R} \rightarrow \mathrm{Status \times Stack}
   \)\vspace*{6pt}\\
-  When the stack is full, push operation records the status, FULL, in the `error` component of the Result tuple.
+  If \textbf{push} finds the stack is already full, it indicates its inability to push the new element by returning the value \texttt{FULL} in the status component of the answer tuple. In such a case, the stack remains unmodified. If the operation "succeeds", it returns OK status and the input element is stored in the topmost location in the new stack.
 
-  The \textbf{peek} operation reads the value on the top of the stack. When the content is not empty, the `data' component of the Result tuple records the value on the stack-top. When the stack is empty, peek records the status, EMPTY, in the `error` component of the Result tuple.
+  The \textbf{peek} operation reads the value at the current top of the stack. When the content is not empty, the `data' component of the Result tuple records the value on the stack-top. When the stack is empty, peek records the status, EMPTY, in the `error` component of the Result tuple.
   \vspace*{6pt}\\\hspace*{32pt}\(
-  \textbf{peek}: \mathrm{Stack} \rightarrow \mathrm{Stack \times Result}
+  \textbf{peek}: \mathrm{Stack} \rightarrow \mathrm{Status \times \mathbb{R}}
   \)\vspace*{6pt}
 
   When the stack is not empty, {\textbf{pop}} removes the topmost element from the stack. This value is not communicated to the caller. An empty stack indicates the failure of pop operation by setting the `error' component of Result to EMPTY:
   \vspace*{6pt}\\\hspace*{32pt}\(
-  \textbf{pop}: \mathrm{Stack} \rightarrow \mathrm{Stack \times Result}
+  \textbf{pop}: \mathrm{Stack} \rightarrow \mathrm{Status \times Stack}
   \)\vspace*{6pt}
 
   A couple of self-explanatory inspector functions are handy. Some programs may prefer to check the state of the stack before attempting stack mutation.
@@ -161,18 +195,18 @@ The basic idea is to augment the Stack interface with a Result component to indi
   \hspace*{32pt}\textbf{full}: \mathrm{Stack} \rightarrow \mathrm{Boolean}
   \)\vspace*{6pt}
 
-\subsection{The Result Interface}
-  The \textbf{Result} interface has a constructor, and value and error component extractors:
-  \vspace*{6pt}\\\(
-  \hspace*{32pt}\textbf{result}: \mathbb{R} \times \mathrm{Status} \rightarrow \mathrm{Result}\vspace*{4pt}\\
-  \hspace*{32pt}\textbf{val}: \mathrm{Result} \rightarrow \mathbb{R}\vspace*{4pt}\\
-  \hspace*{32pt}\textbf{status}: \mathrm{Result} \rightarrow \mathrm{Status}
-  \)\vspace*{6pt}  
+%\subsection{The Result Interface}
+%  The \textbf{Result} interface has a constructor, and value and error component extractors:
+%  \vspace*{6pt}\\\(
+%  \hspace*{32pt}\textbf{result}: \mathbb{R} \times \mathrm{Status} \rightarrow \mathrm{Result}\vspace*{4pt}\\
+%  \hspace*{32pt}\textbf{val}: \mathrm{Result} \rightarrow \mathbb{R}\vspace*{4pt}\\
+%  \hspace*{32pt}\textbf{status}: \mathrm{Result} \rightarrow \mathrm{Status}
+%  \)\vspace*{6pt}  
   
   \textbf{Status} is a set of three values representing the state after performing an operations on a stack instance: 
    \vspace*{6pt}\\\(\hspace*{32pt}\mathrm{Status} = \{OK, \; EMPTY, \; FULL\} \)
 
-  \section{An Abstract Specification of Stack Behavior}
+  \section{The Specification of Checked Bounded Stack Behavior}
     While instantiating a new stack, there is a provision to set the actual depth of the stack to a specific value (which is passed as an argument to the operation). If this value exceeds a limit defined by a particular implementation, the size is set to that limiting value (referred to as MAX\_DEPTH below).
 
     \[
@@ -222,7 +256,7 @@ The basic idea is to augment the Stack interface with a Result component to indi
         (\mathtt{stk},\; {\textcolor{red}{(\_,\; EMPTY)}}\;)  & \mbox{if\;\;} \mathtt{stk} = (size,\,\epsilon). \end{cases} 
     \]
 
-  \section{A Refinement}
+  \section{Concrete Refinement 3 - Checked Bounded Stack}
     Based on the abstract definitions given in the previous section, we now derive more concrete versions of the same operations. We will call this a \emph{general refinement}. This is not a formally rigorous approach to deriving more concrete implementations from more abstract specifications. Our methods depends mostly on a programmer's intuition to guide the process.
 
     Popular imperative languages have little or no direct support for sequences and append operations that we used in the previous section. These languages support either safe or unsafe versions of array types. We shall assume here that we have at our disposal unsafe arrays with no direct support for bounds checking. Therefore, we shall use a representation that enforces safety of stack operations.
