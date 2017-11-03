@@ -30,19 +30,19 @@ static void _do_graph_bfs_(Graph g, Vertex v, Visitor visit)
     while (!queue_empty(q)) {
         queue_remove(q, &res);
         assert(res.status == QUEUE_OK);
-        
+
         u = res.data;
         if (!VISITED_VERTEX(vert_state[u])) {
             vert_state[u] = MARK_VISITED_VERTEX(vert_state[u]);
-            
+
             /* call the function that is interested in the visited vertex */
             visit(vertex_new(u, g.labels[u], 0));
-            
+
             /* push each neighbors of vertex u on the stack */
             for (w = 0; w < g.vc; ++w) {
-            	if (w != u && g.adj[u][w]) {
-            	    queue_add(q, w, &res);
-            	    assert(res.status == QUEUE_OK);
+                if (w != u && g.adj[u][w]) {
+                    queue_add(q, w, &res);
+                    assert(res.status == QUEUE_OK);
                 }
             }
         }
@@ -52,6 +52,6 @@ static void _do_graph_bfs_(Graph g, Vertex v, Visitor visit)
 void graph_bfs(Graph g, Visitor visit)
 {
     Vertex root = vertex_new(0, g.labels[g.vc-1], 0);
-    
+
     _do_graph_bfs_(g, root, visit);
 }

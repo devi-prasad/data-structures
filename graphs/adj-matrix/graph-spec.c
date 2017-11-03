@@ -41,7 +41,7 @@ void test_six_vertex_graph()
     Walk p = {5, 0, {5, 2, 4, 1, 3, 0 } };
 
     assert(isa_walk(g, w));
-    
+
     assert(!isa_trail(g, w));
     assert(isa_trail(g, t));
     assert(isa_trail(g, t));
@@ -60,16 +60,3 @@ int main()
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

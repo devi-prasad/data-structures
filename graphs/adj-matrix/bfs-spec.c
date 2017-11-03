@@ -34,7 +34,7 @@ void test_six_vertex_graph()
         },
         {"a", "b", "c", "d", "e", "f"},
     };
-  
+
     graph_bfs(g, printer);
 }
 
@@ -51,7 +51,7 @@ void test_six_vertex_complete_graph()
         },
         {"a", "b", "c", "d", "e", "f"},
     };
-  
+
     graph_bfs(g, printer);
 }
 
@@ -83,6 +83,6 @@ int main()
     test_six_vertex_complete_graph();
     printf("\n\n");
     test_generic_graph();
-    
+
     return 0;
 }

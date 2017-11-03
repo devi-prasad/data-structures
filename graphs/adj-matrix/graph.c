@@ -20,12 +20,12 @@ int isa_walk(const Graph g, const Walk w)
 
     uint8_t u, v;
     int i;
-    
+
     for (i = 0; i < w.len; ++i) {
-    	u = w.visits[i];
-    	v = w.visits[i+1];
-    	assert(u < g.vc);
-    	assert(v < g.vc);
+        u = w.visits[i];
+        v = w.visits[i+1];
+        assert(u < g.vc);
+        assert(v < g.vc);
         /* assert(IS_AN_EDGE(g.adj[u][v])); */
 
         if (NOT_AN_EDGE(g.adj[u][v])) return 0;
