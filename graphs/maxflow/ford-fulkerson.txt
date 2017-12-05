@@ -1,0 +1,199 @@
+
+Determining Maximum Flow in a Network
+--------------------------------------
+
+A flow network G = (V, E) is a directed graph in which 
+each edge (u, v) in E has a nonnegative capacity c(u, v) >= 0. 
+
+If E contains an edge (u, v) then there is no edge (v, u) in the
+reverse direction.
+
+if (u, v) not in E, then c(u, v) = 0.
+
+Each vertex lies on some path from Source s, and Sink t.
+
+A flow in G is a real-valued function f: V X V -> R satisfying
+the following two properties:
+    1. Capacity constraint.
+        for all u, v in V, 0 <= f(u, v) <= c(u, v)
+
+    2. Flow conservation.
+        for all u in V - {s, t}, we require
+        SUM(f(v, u)) where v in V = SUM(f(u, w)) where w in V
+
+
+  *****************************************************************
+  *               DISCUSSION - Figure 26.1 pp 710                 *
+  *****************************************************************
+
+f(u, v) is  a non-negative value.
+f(u, v) is the flow from vertex u to vertex v.
+
+The value |f| = SUM(f(s, v)) where v in V, represents the total flow
+out of the source vertex s.
+
+
+In the maximum-flow problem, we are given a flow network G
+with source s and sink t, and are asked to find a flow of
+maximum value.
+
+
+
+
+The Ford-Fulkerson Method
+--------------------------
+This method iteratively increases the value of flow.
+
+Initially, f(u, v) is initialized to zero for all u, v in V.
+
+This introduces the notions of 
+    Residual networks, 
+    Augmenting paths, and
+    Cuts.
+
+
+FORD-FULKERSON-METHOD(Graph G, Vertex s, Vertex t)
+--------------------------------------------------
+1  initialize flow f to 0
+       let f := 0
+--
+2  while there exists an augmenting path p in the residual network Gf
+3      augment flow f along p
+--
+4 return f
+
+
+In each iteration, an "augmenting path" is computed which helps to
+increase the flow vlaue in the associated "residual network", Gf.
+
+By knowing the edges of an augmenting path in Gf, we can identify
+specific edges in G for which we can change the flow (so that we
+increase the value of the flow).
+
+Although each iteration increases the value of the flow, the flow
+on any particular edge of G may increase or decrease
+    decreasing the flow on some edges allows an algorithm to send
+    more flow from the source to the sink.
+
+
+
+
+Residual Network
+----------------
+Given a flow network G and flow f, a residual network Gf consists of
+edges that can admit more flow with their  "residual capacity"
+defined as
+    cf(u, v) = c(u, v) - f(u, v)
+
+Those edges (u, v) whose flow equals their capacity have
+    cf(u, v) = 0, 
+and they are not in Gf.
+
+
+The residual network Gf may, however, contain edges that are not in G.
+
+As an algorithm manipulates the flow, with the goal of increasing
+the total flow, it might need to decrease the flow on a particular
+edge.
+
+In order to represent a possible decrease of a positive flow f(u, v)
+on an edge in G, this method places an edge (u, v) into Gf with
+residual capacity cf(v, u) = f(u, v)
+    an edge that can admit flow in the opposite direction
+    to (u, v), at most canceling out the flow on (u, v).
+
+Sending flow back along an edge is equivalent to decreasing the
+flow on the edge, which is a necessary operation in many algorithms.
+
+
+Let G = (V, E) be a flow network with source s and sink t.
+Let f be the flow in G, and consider a pair of vertices, u and v in V.
+The residual capacity - cf(u, v), is defined by these equations:
+
+    cf(u, v) = c(u, v) - f(u, v)   if (u, v) in E.
+    cf(u, v) = f(v, u)             if (v, u) in E.
+    cf(u, v) = 0                   otherwise.
+
+
+Given a flow network G = (V, E), and flow f, the residual network of G
+induced by f is Gf = (V, Ef), where
+    Ef = { (u, v) in V x V : cf(u, v) > 0 }
+
+That is, each edge of the residual network - residual edge - can
+admit a flow that is greater than 0.
+
+  *****************************************************************
+  *                                                               *
+  *               DISCUSSION - Figure 26.4 pp 717                 *
+  *                                                               *
+  *****************************************************************
+
+
+
+Augmenting Path and Residual Capacity
+--------------------------------------
+
+Given a flow network G = (V, E) and a flow f, an augmenting path p
+is a simple path from s to t in the residual network Gf.
+
+
+By the definition of the residual network, we may increase the flow
+on an edge (u, v) of an augmenting path by up to cf(u, v) without
+violating the capacity constraint.
+
+
+The maximum amount by which we can increase the flow on each edge
+in an augmenting path p is called the residual capacity of p.
+
+Residual capacity is given by the following expression:
+    cf(p) = MIN{ cf(u, v) : (u, v) is on p }
+
+We can define a function fp(u, v) such that 
+    fp(u, v) = cf(p)    if (u, v) on path p
+    fp(u, v) = 0        otherwise
+
+
+
+FORD-FULKERSON(Graph G, Vertex s, Vertex t)
+1. Let G = (V, E)
+2. for each edge (u, v) in E
+3.     f(u, v) = 0
+-
+4. while there exists a path p from s to t in the residual network Gf
+5.     cf(p) = MIN{ cf(u, v) : (u, v) is on p }
+--
+6. for each edge (u, v) in p
+7.     if (u, v) in E
+       then f(u, v) = f(u, v) + cf(p)
+8.     else f(v, u) = f(v, u) - cf(p)
+
+
+  *****************************************************************
+  *                                                               *
+  *            DISCUSSION: Figure 26.6 Page 726.                  *
+  *                                                               *
+  *        Compute the maximum flow in this network.              *
+  *                                                               *
+  *        Hints:                                                 *
+  *            iteration 1: s --> v1 --> v3 --> t                 *
+  *            iteration 2: s --> v2 --> v4 --> t                 *
+  *                                                               *
+  *****************************************************************
+
+
+
+
+
+Edmonds-Karp Algorithm
+-----------------------
+
+We can improve FORD-FULKERSON by finding the augmenting path p
+in line 4 (above) with a breadth-first search.
+
+That is, we choose the augmenting path as a shortest path from
+s to t in the residual network, where each edge has unit distance.
+
+The Ford-Fulkerson method so implemented is called the
+Edmonds-Karp algorithm.
+
+
