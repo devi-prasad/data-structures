@@ -19,7 +19,7 @@ the following two properties:
 
     2. Flow conservation.
         for all u in V - {s, t}, we require
-        SUM(f(v, u)) where v in V = SUM(f(u, w)) where w in V
+        (for v in V. SUM(f(v, u))) = (for w in V. SUM(f(u, w)))
 
 
   *****************************************************************
