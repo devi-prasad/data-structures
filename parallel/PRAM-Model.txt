@@ -1,0 +1,27 @@
+PRAM Model
+
+In the Parallel Random Access Machine model, all processors are connected to a
+global shared memory.
+
+All processors are assumed to work  synchronously on a common clock.
+
+Communication between processots takes place only through the shared memory.
+
+A data from processor Pi is communicated to processor Pj in the following
+steps:
+    (1) processor Pi writes data to the shared memory location.
+    (2) processor Pj reads data from the shared memory location.
+
+There are four different types of configurations possible:
+    EREW
+    CREW
+    ERCW
+    CRCW
+
+CW is problematic if not handled with care. Three different methods may be used
+to resolve conflicts:
+    Equality Conflict Resolution
+    Priority Conflict Resolution
+    Arbitrary Conflict Resolution
+
+
