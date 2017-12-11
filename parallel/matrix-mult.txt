@@ -1,0 +1,69 @@
+Matrix Multiplication
+----------------------
+
+Sequential Algorithm
+
+1   begin
+2     for i = 1 to m do
+3        for j = 1 to k do
+4            c[i, j] = 0
+5            for k = 1 to n do
+6               c[i, j] = c[i, j] + a[i, k] * b[k, j]
+7            end for
+8        end for
+9     end for
+10  end
+
+
+
+CREW Matrix Multiplication
+---------------------------
+This algorithm uses (n*n) (or n-square) processors.
+These processors are arranged in a 2-D topology of size n * n.
+
+Processor P(i, j) computes c[i, j] in the result.
+Each processor computes one inner product of two n-dimensional vectors.
+
+CREW Model
+-----------
+##
+1   begin
+2     for i = 1 to n do in parallel
+3        for j = 1 to k do in parallel
+4            c[i, j] = 0
+5            for k = 1 to n do
+6               c[i, j] = c[i, j] + a[i, k] * b[k, j]
+7            end for
+8        end parallel
+9     end parallel
+10  end
+##
+
+Since there are n*n processors, each processor will be able to execute
+steps 5-7 in O(n) time.
+
+
+CRCW Matrix Multiplication
+---------------------------
+This uses n*n*n (n-cube) processors.
+It runs in O(1) time.
+
+Write conflicts are resolved in the following manner:
+    When more than one processor attempts to write to the same memory location,
+    the sum of the values is written to the location.
+
+This is the direct conversion of the sequential algorithm to a parallel one
+with n * n * n processors computing just the multiplication and addition.
+
+##
+1   begin
+2     for i = 1 to n do in parallel
+3        for j = 1 to k do in parallel
+5           for k = 1 to n do in parallel
+4               c[i, j] = 0
+6               c[i, j] = a[i, k] * b[k, j]
+7            end for
+8        end parallel
+9     end parallel
+10  end
+##
