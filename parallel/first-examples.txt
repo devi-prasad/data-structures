@@ -1,0 +1,74 @@
+Informal reasoning about parallel algorithms.
+
+(A)
+Operation == Boolean AND operation
+
+Model == ERCW with ACR
+
+input: array A[1..n] of boolean values
+output: boolean AND of the array elements, stored in a variable named 'result'.
+
+1  begin
+2     result = true
+3     for i = 1 to n do in parallel
+4       if A[i] == false then
+5         result = false
+6       end if
+7     end parallel
+8  end
+
+With O(n) processes this takes O(1) time.
+
+Initially, the reesult variable is set to true.
+
+If the result of ANDing is true, nothing is updated.
+
+If any one element is false, then the result varianble shoule be set to false.
+In that case, an arbitrary conflict resolution model will produce the correct
+answer.
+
+
+(B)
+Operation == Boolean AND operation
+
+Model == ERCW with ECR
+
+input: array A[1..n] of boolean values.
+output: boolean AND of the array elements, stored in a variable named 'result'.
+
+1  begin
+2    result = false
+3    for i = 1 to n do in parallel
+4      result = A[i]
+5    end parallel
+6  end
+
+Why does this algorithm fail if ACR is used instead of ECR?
+
+
+(C) 
+Operation == Boolean AND operation
+
+Model == EREW.
+
+This is a very strict model of execution. Since writing is exclusive, no two
+processors are allowed to write to a shared location. The result variable is
+shared and cannot be concurrently written.
+
+The trick is to reduce the size of the problem in half each step, achieving
+the time complexity of O(log n).
+
+input: array A[1..n] of boolean values
+output: boolean AND of the array elements, stored in a variable named 'result'.
+
+1  begin
+2    p = n/2
+3    while p > 0 do
+4        for i = 1 to p do in parallel
+5           A[i] = A[2i] & A[2i - 1]
+6        end parallel
+7        p = p/2
+8    end while
+9    result = A[1]
+10 end
+
