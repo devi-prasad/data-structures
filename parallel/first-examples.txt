@@ -61,17 +61,20 @@ the time complexity of O(log n).
 input: array A[1..n] of boolean values
 output: boolean AND of the array elements, stored in a variable named 'result'.
 
+#
 1  begin
 2    p = n/2
+##
 3    while p > 0 do
 4        for i = 1 to p do in parallel
 5           A[i] = A[2i] & A[2i - 1]
 6        end parallel
 7        p = p/2
 8    end while
+##
 9    result = A[1]
 10 end
-
+#
 
 
 (4)
@@ -85,14 +88,18 @@ Vectors a and b are stored in shared memory.
 
 The computed value (a * b) is to be stored in a variable c1.
 
+#
 input:  arrays a[1..n] and b[1..n]
 output: The value of scalar product of a and b stored in variable c{1}
 
+#
 1  begin
 2    for i = 1 to n do in parallel
 3      c{i} = a{i} * b{i}
 4    end parallel
+##
 5    p = n/2
+##
 6    while p > 0 do
 7      for i = 1 to p do in parallel
 8        c{i} = c{i} + c{i + p}
@@ -100,11 +107,11 @@ output: The value of scalar product of a and b stored in variable c{1}
 10     p = p/2
 11   end while
 12 end
+#
 
 Lines 2-4 take O(1) time using n processors.
 Lines 5-10 compute the sum of the elements of an array.
 
 The entire algorithm therefore can be implemented on a EREW PRAM in 
 O(log n) time, using O(n) processors.
-
 

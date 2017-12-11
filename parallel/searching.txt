@@ -1,53 +1,55 @@
-Searching a Sorted Sequence
+(1) Searching a Sorted Sequence
+---------------------------------
 
 input: an array a[1..n] sorted in nondescresing order.
        k is the key to be searched in a.
 
 Model = EREW
-
+-------------
 assume there are n processors - P1,...,PN.
 
 
 EREW Style Broadcasting
 
 Assume processors P0, P1, P2, ..., P8
-------+--------------------------+
-Step  |  Processor      Memory   |
-------|--------------------------|
-  t0  |     Po   w----->  M0      |
-------|--------------------------+
-      |          <-----r  M0     |
-  t1  |     P1                   |
-      |          w----->  M1     |
-------|--------------------------+
-      |          <-----r  M0     |
-      |     P2                   |
-      |          w----->  M2     |
-      |                          |
-  t2  |                          |
-      |          <-----r  M1     |
-      |     P3                   |
-      |          w----->  M3     |
-------|--------------------------+
-      |          <-----r  M0     |
-      |     P4                   |
-      |          w----->  M4     |
-      |                          |
-      |                          |
-      |          <-----r  M1     |
-      |     P5                   |
-      |          w----->  M5     |
-      |                          |
-  t3  |                          | 
-      |          <-----r  M2     |
-      |     P6                   |
-      |          w----->  M6     |
-      |                          |
-      |                          |
-      |          <-----r  M3     |
-      |     P7                   |
-      |          w----->  M7     |
-------+--------------------------+
+
++------+--------------------------+
+| Step |  Processor      Memory   |
++------+--------------------------+
+|  t0  |     Po   w----->  M0     |
++------+--------------------------+
+|      |          <-----r  M0     |
+|  t1  |     P1                   |
+|      |          w----->  M1     |
++------+--------------------------+
+|      |          <-----r  M0     |
+|      |     P2                   |
+|      |          w----->  M2     |
+|      |                          |
+|  t2  |                          |
+|      |          <-----r  M1     |
+|      |     P3                   |
+|      |          w----->  M3     |
++------+--------------------------+
+|      |          <-----r  M0     |
+|      |     P4                   |
+|      |          w----->  M4     |
+|      |                          |
+|      |                          |
+|      |          <-----r  M1     |
+|      |     P5                   |
+|      |          w----->  M5     |
+|      |                          |
+|  t3  |                          |
+|      |          <-----r  M2     |
+|      |     P6                   |
+|      |          w----->  M6     |
+|      |                          |
+|      |                          |
+|      |          <-----r  M3     |
+|      |     P7                   |
+|      |          w----->  M7     |
++------+--------------------------+
 
 Obviously, this is achived in O(log n) time.
 
@@ -55,7 +57,8 @@ Obviously, this is achived in O(log n) time.
 1  begin
 2    broadcast value k to all n processors.
 3    p = n/N
-4    for i = 1 to p do in parallel
+##
+4    for i = 1 to N do in parallel
 5      binary_search ( k, a[((i-1)*p) + 1, ((i-1)*p) + 2, ..., (i*p)] )
 6    end parallel
 7  end 
@@ -68,3 +71,77 @@ Notice that sequential binary search method has same time complexity, and
 therefore, we conclude that there is no speedup in EREW searching over a
 sorted sequence.
 
+
+Model CREW
+------------
+Recall that CREW model allows N processors to concurrently read the same
+(shared) memory location. Thus, in the algorithm discussed above, all the
+processors could read the key value (k) in O(1) time (as compared to O(log n)
+time in the EREW model).
+
+step 2 takes O(1) time.
+step 5 takes O(log (n/N)).
+Thus, the overall complexity is O(log (n/N))
+
+Therefore, this is faster than searching under EREW model.
+
+
+###############################################################################
+
+
+(2) Searching an Arbitrary Sequence
+-------------------------------------
+
+input: an array a[1..n] of elements.
+       No particular order is assumed. And elements need not be distinct.
+       (Values may be duplicated in the array)
+
+       k is the key to be searched in a.
+
+We assume N processors where 1 < N <= n.
+
+The input sequence is divided into N subsequences of equal size.
+Each processor is assigned one of the subsequences.
+
+The value of key k is then broadcast to all the N processors.
+
+Each processor searches for k in the subsequences assigned to it.
+
+1  begin
+2    broadcast k to all the N processors.
+3    p = n/N
+4    for i = 1 to N do in parallel
+##
+5      k(i) = linear_search( k, a[((i-1)*p) + 1, ((i-1)*p) + 2, ..., (i*p)] )
+##
+6    end parallel
+##
+7    for i = i to N do in parallel
+8      if k(i) > 0 then
+9         k = k(i)
+10     end if
+11   end parallel
+12  end.
+
+
+Analysis Under Different Models
+---------------------------------
+(a) EREW
+    step 2 takes O(log N) time.
+    steps 4-6 take O(n/N) time in the worst case.
+    steps 7-11 take O(log N) time.
+
+    The overall complexity of the algorithm
+        t(n) = O(log N) + O(n/N)
+
+(b) CREW
+    step 2 takes O(1) time.
+    steps 4-6 take O(n/N) time in the worst case.
+    steps 7-11 take O(log N) time.
+
+    Therefore, The time complexity is same as in EREW.
+
+ (c) CRCW
+     In this model, both the broadcast operation and the final store operation
+     take constant time. Therefore, the algorithm has a time complecity of
+     O(n/N), which is good.
