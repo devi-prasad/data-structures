@@ -1,6 +1,6 @@
 Informal reasoning about parallel algorithms.
 
-(A)
+(1)
 Operation == Boolean AND operation
 
 Model == ERCW with ACR
@@ -28,7 +28,7 @@ In that case, an arbitrary conflict resolution model will produce the correct
 answer.
 
 
-(B)
+(2)
 Operation == Boolean AND operation
 
 Model == ERCW with ECR
@@ -46,7 +46,7 @@ output: boolean AND of the array elements, stored in a variable named 'result'.
 Why does this algorithm fail if ACR is used instead of ECR?
 
 
-(C) 
+(3) 
 Operation == Boolean AND operation
 
 Model == EREW.
@@ -71,4 +71,40 @@ output: boolean AND of the array elements, stored in a variable named 'result'.
 8    end while
 9    result = A[1]
 10 end
+
+
+
+(4)
+Operation == Scalar Product of Two Vectrors
+
+Let a = [a1, a2, ..., an] and b = [b1, b2, ..., bn] be two vectors.
+Their scalar product is expressed as 
+    c = a1 * b1 + a2 * b2 + ... + an * bn
+
+Vectors a and b are stored in shared memory.
+
+The computed value (a * b) is to be stored in a variable c1.
+
+input:  arrays a[1..n] and b[1..n]
+output: The value of scalar product of a and b stored in variable c{1}
+
+1  begin
+2    for i = 1 to n do in parallel
+3      c{i} = a{i} * b{i}
+4    end parallel
+5    p = n/2
+6    while p > 0 do
+7      for i = 1 to p do in parallel
+8        c{i} = c{i} + c{i + p}
+9      end parallel
+10     p = p/2
+11   end while
+12 end
+
+Lines 2-4 take O(1) time using n processors.
+Lines 5-10 compute the sum of the elements of an array.
+
+The entire algorithm therefore can be implemented on a EREW PRAM in 
+O(log n) time, using O(n) processors.
+
 
