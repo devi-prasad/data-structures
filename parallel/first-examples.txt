@@ -86,7 +86,7 @@ Their scalar product is expressed as
 
 Vectors a and b are stored in shared memory.
 
-The computed value (a * b) is to be stored in a variable c1.
+The computed value (a * b) is to be stored in a variable c.
 
 #
 input:  arrays a[1..n] and b[1..n]
