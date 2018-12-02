@@ -1,0 +1,100 @@
+
+
+Monte Carlo Algorithms 
+------------------------
+A Monte Carlo randomized algorithm's output may be incorrect with a certain,
+typically small, probability.
+
+A Monte Carlo randomized algorithm gambels with correctness, but does not
+gample with the runnitme time of the algorithm.
+
+
+Example 1 - 2-SAT Problem.
+----------------------------
+    Given a set of boolean clauses in CNF each containing two literals,
+    find a satisfying assignment if one exists.
+
+    (x1 + x4) (!x4 + x3) (x2 + !x3)
+
+    Statrt with any tentative assignment If there is an unsatisfied clause,
+    pick one of its two literals at random, and flip it.
+
+    If no solution found in 2n^2 steps, declare "none exists" - give up.
+
+    if a solution exists it will be found with a probability of > 0.5,
+    else, will always declare none exists.
+
+
+Example 2 - Matrix Product Verfication.
+----------------------------------------
+     Suppose A, B and C are N x N matrices with entries from a
+     finite field F. We wish to verify whether AB = C.
+      -- A 'field' is a set on which addition, subtraction, multiplication,
+         and division are defined, and behave as the corresponding operations
+         on real numbers do. )
+
+    Multiplying takes about n^3 steps. 
+
+    Pick an n-vector x with elements randomly drawn from F.
+    Compute z = A (Bx).
+    If z = Cx then declare AB = C.
+    Otherwise, declare AB != C.
+
+    This takes O(n^2) steps.
+
+    If AB = C, will always output AB = C.
+    If AB != C, will output AB = C with probability at most 1/|F|.
+
+
+Example 3 - Min Cut problem.
+------------------------------
+    Given a graph G = (V, E), find a non-empty subset  S of V, such that
+    number of edges from S to (V - S) is minimized.
+
+    Size of the cut is same as the number of edges from S to (V - S).
+
+There is a technique called 'contraction' that successively chooses a
+random edge and deletes it from the graph. Then it removes any
+resulting self-loops from the graph.
+
+The probability that the contraction algorithm will output a min cut is 1/(n^2).
+
+
+
+Las Vegas Algorithms
+----------------------
+A Las Vegas algorithm is a randomized algorithm that always gives the
+correct result but gambles with resources.
+
+
+Example 1 - Compute a random point in a circle.
+-------------------------------------------------
+    The idea is to first generate a point (x, y), with -1 < x < 1 and 
+    -1 < y < 1. If this point happens to fall within the unit circle we 
+    keep it, otherwise we throw it away and try again.
+
+    This algorithm obviously gives the correct result, but it gambles with the
+    number of calls to the random number generator.
+
+    (double, double) point_in_circle()
+    {
+        for {
+            double x = (2 * rand.Double()) - 1
+            double y = (2 * rand.Double()) - 1
+            if ((x * x + y * y) < 1) return (x, y);
+        }
+    }
+
+
+Example 2 - Compute a random point in a circle.
+------------------------------------------------
+    The following algorithm is more likely to produce a point close to the
+    middle of the circle. 
+
+    (double, double) point_in_circle2()
+    {
+        double r = rand.Double()
+        double θ = 2 * PI * rand.Double()
+        return (r * Cos(θ), r * Sin(θ));
+    }
+
